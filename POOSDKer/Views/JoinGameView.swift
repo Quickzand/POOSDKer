@@ -8,9 +8,15 @@
 import SwiftUI
 
 struct JoinGameView: View {
+    @EnvironmentObject var appState : AppState
     var body: some View {
         VStack {
-            Text("Join Game")
+            Button {
+                appState.networkingController.participantController.startBrowsing()
+            }
+        label: {
+            Text("Start searching...")
+        }
             NavigationLink("Lobby", destination: LobbyView())
         }
     }

@@ -20,6 +20,9 @@
 		34C7B28F2B8E5E00007DA1EB /* LobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B28E2B8E5E00007DA1EB /* LobbyView.swift */; };
 		34C7B2912B8E62D9007DA1EB /* PlayGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2902B8E62D9007DA1EB /* PlayGameView.swift */; };
 		34C7B2932B8E6317007DA1EB /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2922B8E6317007DA1EB /* ResultsView.swift */; };
+		34C7B2962B8E6A4C007DA1EB /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2952B8E6A4C007DA1EB /* AppState.swift */; };
+		34C7B2982B8E6A9F007DA1EB /* NetworkingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */; };
+		34C7B29A2B8E6B30007DA1EB /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2992B8E6B30007DA1EB /* Settings.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +59,9 @@
 		34C7B28E2B8E5E00007DA1EB /* LobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyView.swift; sourceTree = "<group>"; };
 		34C7B2902B8E62D9007DA1EB /* PlayGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayGameView.swift; sourceTree = "<group>"; };
 		34C7B2922B8E6317007DA1EB /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
+		34C7B2952B8E6A4C007DA1EB /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingController.swift; sourceTree = "<group>"; };
+		34C7B2992B8E6B30007DA1EB /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +112,7 @@
 		344582242B816A530008524D /* POOSDKer */ = {
 			isa = PBXGroup;
 			children = (
+				34C7B2942B8E6A3F007DA1EB /* Backend */,
 				34C7B2872B8E5AC7007DA1EB /* Views */,
 				344582252B816A530008524D /* POOSDKerApp.swift */,
 				344582272B816A530008524D /* ContentView.swift */,
@@ -151,6 +158,16 @@
 				34C7B2922B8E6317007DA1EB /* ResultsView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		34C7B2942B8E6A3F007DA1EB /* Backend */ = {
+			isa = PBXGroup;
+			children = (
+				34C7B2952B8E6A4C007DA1EB /* AppState.swift */,
+				34C7B2992B8E6B30007DA1EB /* Settings.swift */,
+				34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */,
+			);
+			path = Backend;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -286,11 +303,15 @@
 				344582282B816A530008524D /* ContentView.swift in Sources */,
 				34C7B2932B8E6317007DA1EB /* ResultsView.swift in Sources */,
 				344582262B816A530008524D /* POOSDKerApp.swift in Sources */,
+				34C7B2962B8E6A4C007DA1EB /* AppState.swift in Sources */,
+
 				34C7B2892B8E5ADD007DA1EB /* HostGameView.swift in Sources */,
 				34C7B28B2B8E5CE6007DA1EB /* JoinGameView.swift in Sources */,
 				34C7B28D2B8E5D11007DA1EB /* SettingsView.swift in Sources */,
 				34C7B2912B8E62D9007DA1EB /* PlayGameView.swift in Sources */,
 				34C7B28F2B8E5E00007DA1EB /* LobbyView.swift in Sources */,
+				34C7B29A2B8E6B30007DA1EB /* Settings.swift in Sources */,
+				34C7B2982B8E6A9F007DA1EB /* NetworkingController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

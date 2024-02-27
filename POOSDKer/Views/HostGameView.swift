@@ -8,9 +8,15 @@
 import SwiftUI
 
 struct HostGameView: View {
+    @EnvironmentObject var appState : AppState
     var body: some View {
         VStack {
-            Text("Host game")
+            Button {
+                appState.networkingController.hostController.startService()
+                
+            } label: {
+                Text("Start Host")
+            }
             NavigationLink("Lobby", destination: LobbyView())
         }
     }
