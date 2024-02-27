@@ -14,6 +14,12 @@
 		344582372B816A540008524D /* POOSDKerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344582362B816A540008524D /* POOSDKerTests.swift */; };
 		344582412B816A540008524D /* POOSDKerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344582402B816A540008524D /* POOSDKerUITests.swift */; };
 		344582432B816A540008524D /* POOSDKerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344582422B816A540008524D /* POOSDKerUITestsLaunchTests.swift */; };
+		34C7B2892B8E5ADD007DA1EB /* HostGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2882B8E5ADD007DA1EB /* HostGameView.swift */; };
+		34C7B28B2B8E5CE6007DA1EB /* JoinGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B28A2B8E5CE6007DA1EB /* JoinGameView.swift */; };
+		34C7B28D2B8E5D11007DA1EB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B28C2B8E5D11007DA1EB /* SettingsView.swift */; };
+		34C7B28F2B8E5E00007DA1EB /* LobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B28E2B8E5E00007DA1EB /* LobbyView.swift */; };
+		34C7B2912B8E62D9007DA1EB /* PlayGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2902B8E62D9007DA1EB /* PlayGameView.swift */; };
+		34C7B2932B8E6317007DA1EB /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2922B8E6317007DA1EB /* ResultsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +50,12 @@
 		3445823C2B816A540008524D /* POOSDKerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = POOSDKerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		344582402B816A540008524D /* POOSDKerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POOSDKerUITests.swift; sourceTree = "<group>"; };
 		344582422B816A540008524D /* POOSDKerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POOSDKerUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		34C7B2882B8E5ADD007DA1EB /* HostGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostGameView.swift; sourceTree = "<group>"; };
+		34C7B28A2B8E5CE6007DA1EB /* JoinGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGameView.swift; sourceTree = "<group>"; };
+		34C7B28C2B8E5D11007DA1EB /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		34C7B28E2B8E5E00007DA1EB /* LobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyView.swift; sourceTree = "<group>"; };
+		34C7B2902B8E62D9007DA1EB /* PlayGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayGameView.swift; sourceTree = "<group>"; };
+		34C7B2922B8E6317007DA1EB /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +106,7 @@
 		344582242B816A530008524D /* POOSDKer */ = {
 			isa = PBXGroup;
 			children = (
+				34C7B2872B8E5AC7007DA1EB /* Views */,
 				344582252B816A530008524D /* POOSDKerApp.swift */,
 				344582272B816A530008524D /* ContentView.swift */,
 				344582292B816A540008524D /* Assets.xcassets */,
@@ -125,6 +138,19 @@
 				344582422B816A540008524D /* POOSDKerUITestsLaunchTests.swift */,
 			);
 			path = POOSDKerUITests;
+			sourceTree = "<group>";
+		};
+		34C7B2872B8E5AC7007DA1EB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				34C7B2882B8E5ADD007DA1EB /* HostGameView.swift */,
+				34C7B28A2B8E5CE6007DA1EB /* JoinGameView.swift */,
+				34C7B28C2B8E5D11007DA1EB /* SettingsView.swift */,
+				34C7B28E2B8E5E00007DA1EB /* LobbyView.swift */,
+				34C7B2902B8E62D9007DA1EB /* PlayGameView.swift */,
+				34C7B2922B8E6317007DA1EB /* ResultsView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -258,7 +284,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				344582282B816A530008524D /* ContentView.swift in Sources */,
+				34C7B2932B8E6317007DA1EB /* ResultsView.swift in Sources */,
 				344582262B816A530008524D /* POOSDKerApp.swift in Sources */,
+				34C7B2892B8E5ADD007DA1EB /* HostGameView.swift in Sources */,
+				34C7B28B2B8E5CE6007DA1EB /* JoinGameView.swift in Sources */,
+				34C7B28D2B8E5D11007DA1EB /* SettingsView.swift in Sources */,
+				34C7B2912B8E62D9007DA1EB /* PlayGameView.swift in Sources */,
+				34C7B28F2B8E5E00007DA1EB /* LobbyView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
