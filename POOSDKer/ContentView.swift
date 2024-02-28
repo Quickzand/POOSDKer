@@ -19,6 +19,8 @@ struct ContentView: View {
                 NavigationLink("Settings", destination: SettingsView())
                     .padding()
             }
+        }.onAppear {
+            appState.networkingController.hostController.startHosting()
         }
     }
 }
