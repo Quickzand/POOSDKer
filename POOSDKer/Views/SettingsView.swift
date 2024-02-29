@@ -8,11 +8,18 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject var appState : AppState
     var body: some View {
-        Text("Settings")
+        VStack {
+            
+            TextField("Display Name", text: $appState.settings.displayName)
+                .frame(maxWidth:.infinity)
+                .multilineTextAlignment(.center)
+        }
+        
     }
 }
 
 #Preview {
-    SettingsView()
+    SettingsView().environmentObject(AppState())
 }

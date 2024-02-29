@@ -1,0 +1,13 @@
+//
+//  Settings.swift
+//  POOSDKer
+//
+//  Created by Matthew Sand on 2/29/24.
+//
+
+import Foundation
+
+
+class Settings {
+    @Published var displayName : String = ""
+}
