@@ -23,6 +23,7 @@
 		34C7B2932B8E6317007DA1EB /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2922B8E6317007DA1EB /* ResultsView.swift */; };
 		34C7B2962B8E6A4C007DA1EB /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2952B8E6A4C007DA1EB /* AppState.swift */; };
 		34C7B2982B8E6A9F007DA1EB /* NetworkingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */; };
+		34F998312B9346590077B62F /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F998302B9346590077B62F /* TableView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		34C7B2922B8E6317007DA1EB /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
 		34C7B2952B8E6A4C007DA1EB /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingController.swift; sourceTree = "<group>"; };
+		34F998302B9346590077B62F /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +160,7 @@
 				34C7B28A2B8E5CE6007DA1EB /* JoinGameView.swift */,
 				34C7B28C2B8E5D11007DA1EB /* SettingsView.swift */,
 				34C7B28E2B8E5E00007DA1EB /* LobbyView.swift */,
+				34F998302B9346590077B62F /* TableView.swift */,
 				34C7B2902B8E62D9007DA1EB /* PlayGameView.swift */,
 				34C7B2922B8E6317007DA1EB /* ResultsView.swift */,
 			);
@@ -303,6 +306,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				344582282B816A530008524D /* ContentView.swift in Sources */,
+				34F998312B9346590077B62F /* TableView.swift in Sources */,
 				34C7B2932B8E6317007DA1EB /* ResultsView.swift in Sources */,
 				344582262B816A530008524D /* POOSDKerApp.swift in Sources */,
 				34C7B2962B8E6A4C007DA1EB /* AppState.swift in Sources */,

@@ -12,7 +12,7 @@ struct HostGameView: View {
     var body: some View {
         VStack {
             Button {
-                appState.networkingController.hostController.startHosting(displayName: appState.settings.displayName)
+                appState.networkingController.startHosting();
                 
             } label: {
                 Text("Start Host")

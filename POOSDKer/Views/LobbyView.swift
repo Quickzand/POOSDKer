@@ -11,6 +11,9 @@ struct LobbyView: View {
     var body: some View {
         VStack {
             Text("Lobby")
+            VStack {
+                TableView()
+            }
             NavigationLink("Play Game", destination: PlayGameView())
         }
     }

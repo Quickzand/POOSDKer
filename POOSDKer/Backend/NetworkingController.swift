@@ -6,163 +6,123 @@
 //
 
 import Foundation
-import Network
+import MultipeerConnectivity
 
-
-class NetworkingController  {
-    var hostController : HostNetworkingController = HostNetworkingController()
-    var participantController : ParticipantNetworkingController = ParticipantNetworkingController()
-}
-
-
-class HostNetworkingController {
-    var listener: NWListener?
-
-    func startHosting(displayName : String) {
-        do {
-            let parameters = NWParameters.tcp
-            parameters.includePeerToPeer = true
-
-            
-            let serviceType = "_poosdker._tcp"
-            let serviceName = "POOSDker"
-
-            // THIS PUTS IT ON A RANDOM PORT
-            listener = try NWListener(using: parameters)
-            listener?.service = NWListener.Service(name: serviceName, type: serviceType)
-
-            listener?.stateUpdateHandler = { newState in
-                switch newState {
-                case .ready:
-                    print("Listener ready on port \(self.listener?.port ?? 0)")
-                case .failed(let error):
-                    print("Listener failed to start, error: \(error)")
-                default:
-                    break
-                }
-            }
-
-            listener?.newConnectionHandler = {  connection in
-                connection.stateUpdateHandler = { newState in
-                    switch newState {
-                    case .ready:
-                        print("Connected to \(connection.endpoint)")
-                        // Prepare the info as a Data object
-                        let hostInfo = ["displayName": displayName, "websocketInfo": "WebSocket Details"]
-                        if let hostInfoData = try? JSONEncoder().encode(hostInfo) {
-                            connection.send(content: hostInfoData, completion: .contentProcessed({ sendError in
-                                if let sendError = sendError {
-                                    print("Failed to send host info: \(sendError)")
-                                    return
-                                }
-                                // Handle successful sending of host info, e.g., prepare for further communication
-                            }))
-                        }
-                    default:
-                        break
-                    }
-                }
-                connection.start(queue: .main)
-            }
-
-            listener?.start(queue: .main)
-        } catch {
-            print("Unable to create NWListener: \(error.localizedDescription)")
+class NetworkingController: NSObject, MCNearbyServiceAdvertiserDelegate, MCNearbyServiceBrowserDelegate {
+    
+    var peerID: MCPeerID!
+    var mcSession: MCSession!
+    var serviceAdvertiser: MCNearbyServiceAdvertiser!
+    var serviceBrowser: MCNearbyServiceBrowser!
+    let serviceType = "poosdker"
+    
+    @Published var connectedPeers : [ConnectedPeer] = [];
+    
+    func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
+        // Accept invitations automatically or based on user input
+        invitationHandler(true, self.mcSession)
+    }
+    
+    
+    func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
+            // Automatically send a connection request or based on user input
+            browser.invitePeer(peerID, to: self.mcSession, withContext: nil, timeout: 10)
         }
-    }
-
-    func stopHosting() {
-        listener?.cancel()
-        listener = nil
-    }
-}
-
-
-
-
-struct DiscoveredHost : Identifiable {
-    var id: UUID = UUID()
-    var displayName : String
-}
-
-
-class ParticipantNetworkingController {
-    private var browser: NWBrowser?
-    
-    
-    var discoveredHosts : [DiscoveredHost] = [];
-
-    func startBrowsing() {
-        // Sets up peer to peer params
-        let parameters = NWParameters()
-        parameters.includePeerToPeer = true
-
         
-        let serviceType = "_poosdker._tcp"
-        let browserDescriptor = NWBrowser.Descriptor.bonjour(type: serviceType, domain: "local")
-        browser = NWBrowser(for: browserDescriptor, using: parameters)
-
-        // Handls results
-        browser?.stateUpdateHandler = { state in
-            switch state {
-            case .ready:
-                print("Browser is ready.")
-            case .failed(let error):
-                print("Browser failed with error: \(error)")
-            default:
-                break
-            }
+        func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
+            print("Lost connection to peer " + peerID.displayName)
         }
-
-        browser?.browseResultsChangedHandler = { results, changes in
-            for result in results {
-                guard case let .service(name, _, _, _) = result.endpoint else { continue }
-                
-                let connection = NWConnection(to: result.endpoint, using: NWParameters.tcp)
-                connection.stateUpdateHandler = { newState in
-                    switch newState {
-                    case .ready:
-                        print("Connected to host: \(name)")
-                        // Now ready to receive data
-                        self.receiveInitialInfo(connection: connection)
-                    default:
-                        break
-                    }
-                }
-                connection.start(queue: .main)
-            }
-        }
-
-        // Start browsing on the main thread
-        // MARK: We may wanna change this later to be on its own thread to have stuff updating real time, might be complicated though...
-        browser?.start(queue: .main)
+ 
+    
+    override init() {
+        super.init()
+        
+        // Setup peer and session
+        self.peerID = MCPeerID(displayName: UIDevice.current.name)
+        self.mcSession = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .required)
+        self.mcSession.delegate = self
+        
+        // Setup advertiser and browser
+        self.serviceAdvertiser = MCNearbyServiceAdvertiser(peer: peerID, discoveryInfo: nil, serviceType: serviceType)
+        self.serviceAdvertiser.delegate = self
+        
+        self.serviceBrowser = MCNearbyServiceBrowser(peer: peerID, serviceType: serviceType)
+        self.serviceBrowser.delegate = self
     }
     
     
-    func receiveInitialInfo(connection: NWConnection) {
-        connection.receive(minimumIncompleteLength: 1, maximumLength: 65536) { (data, _, isComplete, error) in
-            guard let data = data, error == nil else {
-                print("Error receiving data: \(error?.localizedDescription ?? "unknown error")")
-                return
-            }
-            if let hostInfo = try? JSONDecoder().decode(Dictionary<String, String>.self, from: data) {
-                print("Received host info: \(hostInfo)")
-                
-                if let displayName = hostInfo["displayName"] {
-                    self.discoveredHosts.append(DiscoveredHost(displayName: displayName))
-                }
-            }
-            if isComplete {
-                // Close the connection if the communication is complete
-                connection.cancel()
-            }
-        }
+    
+    func updatePeers() {
+          // Clear the current list
+          connectedPeers.removeAll()
+          
+          // Add all connected peers to the list
+          for peer in mcSession.connectedPeers {
+              let connectedPeer = ConnectedPeer(id: peer)
+              connectedPeers.append(connectedPeer)
+          }
+          
+          // Notify the UI or whoever needs to know that the list has been updated
+          // This could be via NotificationCenter, a delegate pattern, or SwiftUI's @Published property wrapper, etc.
+      }
+    
+    
+    func startHosting() {
+        print("Starting hosting...")
+        serviceAdvertiser.startAdvertisingPeer()
     }
-
-
+    
+    func stopHosting() {
+        print("Stopping hosting...")
+        serviceAdvertiser.stopAdvertisingPeer()
+    }
+    
+    func startBrowsing() {
+        print("Starting browsing...")
+        serviceBrowser.startBrowsingForPeers()
+    }
+    
     func stopBrowsing() {
-        browser?.cancel()
-        browser = nil
-        print("Browsing stopped.")
+        print("Stopping browsing...")
+        serviceBrowser.stopBrowsingForPeers()
+    }
+}
+
+
+// All session control code
+extension NetworkingController : MCSessionDelegate {
+    
+    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+          DispatchQueue.main.async { [weak self] in
+              self?.updatePeers()
+              
+              // Optionally, post a notification or call a delegate method here to inform other parts of your app
+          }
+      }
+      
+    
+    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        print("Here")
+    }
+    
+    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+        print("Here")
+    }
+    
+    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
+        print("Here")
+    }
+    
+    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+        print("Here")
+    }
+    
+}
+
+
+struct ConnectedPeer : Identifiable {
+    var id: MCPeerID
+    var displayName: String {
+        return id.displayName
     }
 }

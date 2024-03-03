@@ -11,6 +11,7 @@ import Foundation
 class AppState : ObservableObject {
     @Published var networkingController : NetworkingController = NetworkingController();
     @Published var settings : Settings = Settings()
+    
 }
 
 
