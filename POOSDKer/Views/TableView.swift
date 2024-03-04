@@ -13,7 +13,14 @@ struct Player {
 }
 
 struct TableView: View {
-    let players : [Player] = [Player(displayName: "Test"), Player(displayName: "Test2"),Player(displayName: "Test2"),Player(displayName: "Test2"),Player(displayName: "Test2")]
+    @EnvironmentObject var appState : AppState
+    
+    
+    
+    // For an actual game we set this to true
+    var isPreview = false
+    
+    
      let radius: CGFloat = 150 // Distance from the center circle
     
      var body: some View {
@@ -26,15 +33,15 @@ struct TableView: View {
                  .position(center)
              
              // Surrounding Circles
-             ForEach(0..<players.count, id: \.self) { index in
+             ForEach(0..<appState.connectedPeers.count, id: \.self) { index in
                  ZStack {
                      Circle()
                          .frame(width: 60)
-                     Text("Test")
+                     Text(appState.connectedPeers[index].id == appState.UID ? "Me" : "Someone else")
                          .foregroundStyle(Color(.white))
                  }
-                 .position(x: center.x + radius * cos(CGFloat(index) * 2 * .pi / CGFloat(players.count) - .pi / 2.0),
-                               y: center.y + radius * sin(CGFloat(index) * 2 * .pi / CGFloat(players.count) - .pi / 2.0))
+                 .position(x: center.x + radius * cos(CGFloat(index) * 2 * .pi / CGFloat(appState.connectedPeers.count) - .pi / 2.0),
+                           y: center.y + radius * sin(CGFloat(index) * 2 * .pi / CGFloat(appState.connectedPeers.count) - .pi / 2.0))
              }
          }
      }

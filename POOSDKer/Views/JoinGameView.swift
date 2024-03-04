@@ -11,18 +11,18 @@ struct JoinGameView: View {
     @EnvironmentObject var appState : AppState
     var body: some View {
         List {
-            ForEach(appState.networkingController.connectedPeers) {
+            ForEach(appState.discoveredPeers) {
                 discoveredHostModel in
                 
-                DiscoveredHostView(discoveredHostModel: discoveredHostModel)
+                DiscoveredHostView(discoveredPeer: discoveredHostModel)
                 
             }
         }
         .onAppear {
-            appState.networkingController.startBrowsing()
+            appState.networkingController?.startBrowsing()
         }
         .onDisappear {
-            appState.networkingController.stopBrowsing()
+            appState.networkingController?.stopBrowsing()
         }
         .navigationTitle("Join Lobby")
         .toolbarTitleDisplayMode(.inlineLarge)
@@ -31,15 +31,11 @@ struct JoinGameView: View {
 
 
 struct DiscoveredHostView : View {
-    
-    var discoveredHostModel : ConnectedPeer
+    @EnvironmentObject var appState : AppState
+    var discoveredPeer : Peer
     
     var body : some View {
-        Button {
-            print(discoveredHostModel)
-        } label : {
-            Text(discoveredHostModel.displayName)
-        }
+        NavigationLink(discoveredPeer.displayName, destination: LobbyView(peerHost: discoveredPeer))
     }
 }
 
