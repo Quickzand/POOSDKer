@@ -29,7 +29,12 @@ struct LobbyView: View {
             }
         }
         .onDisappear {
-            appState.networkingController?.stopHosting();
+            if(appState.isHost) {
+                appState.networkingController?.stopHosting();
+            }
+            else {
+                appState.networkingController?.disconnectFromHost()
+            }
         }
     }
 }

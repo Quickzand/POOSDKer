@@ -28,13 +28,6 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         self.mcSession = MCSession(peer: appState.peerID, securityIdentity: nil, encryptionPreference: .required)
         self.mcSession.delegate = self
         
-        // Generate or retrieve a unique identifier for the host
-        let hostID = "someUniqueIdentifier" // This should be uniquely generated or retrieved
-        
-        // Setup advertiser with discovery info including both displayName and a unique ID
-        let discoveryInfo = ["displayName": appState.peerID.displayName, "hostID": hostID]
-        self.serviceAdvertiser = MCNearbyServiceAdvertiser(peer: appState.peerID, discoveryInfo: discoveryInfo, serviceType: serviceType)
-        self.serviceAdvertiser.delegate = self
         
         // Setup browser
         self.serviceBrowser = MCNearbyServiceBrowser(peer: appState.peerID, serviceType: serviceType)
@@ -79,6 +72,10 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     
     func startHosting() {
         print("Starting hosting...")
+        // Setup advertiser with discovery info including both displayName and a unique ID
+        let discoveryInfo = ["displayName": appState.settings.displayName, "hostID": self.appState.UID]
+        self.serviceAdvertiser = MCNearbyServiceAdvertiser(peer: appState.peerID, discoveryInfo: discoveryInfo, serviceType: serviceType)
+        self.serviceAdvertiser.delegate = self
         appState.connectedPeers = []
         appState.connectedPeers.append(Peer(id: appState.UID, displayName: appState.settings.displayName, mcPeerID:appState.peerID))
         appState.isHost = true
@@ -105,10 +102,15 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     
     func invitePeer(_ peer: MCPeerID) {
         appState.isHost = false
-        let infoToSend = ["displayName": UIDevice.current.name, "id": appState.UID]
+        let infoToSend = ["displayName": appState.settings.displayName, "id": appState.UID]
         if let context = try? JSONEncoder().encode(infoToSend) {
             serviceBrowser.invitePeer(peer, to: mcSession, withContext: context, timeout: 30)
         }
+    }
+    
+    
+    func disconnectFromHost() {
+        mcSession.disconnect()
     }
     
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
@@ -116,7 +118,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
             // Now you have the additional info
             if let displayName = receivedInfo["displayName"], let uniqueID = receivedInfo["id"] {
                 self.appState.connectedPeers.append(Peer(id: uniqueID, displayName: displayName, mcPeerID: peerID))
-                print("Connecting user with id: " + uniqueID)
+                print("Connecting user with name: " + displayName)
             }
         }
         
@@ -135,6 +137,13 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
             print("Error encoding or sending peers: \(error)")
         }
     }
+    
+    
+    func getUserDataFromPeerID(peerID: MCPeerID) -> Peer?  {
+        return self.appState.connectedPeers.first(where: {peer in
+            return peer.mcPeerID == peerID
+        })
+    }
  
 }
 
@@ -150,6 +159,7 @@ extension NetworkingController : MCNearbyServiceBrowserDelegate {
             if(!self.appState.discoveredPeers.contains(where: {tempPeer in
                 return tempPeer.id == hostID
             })) {
+                print("Discovered host ")
                 self.appState.discoveredPeers.append(Peer(id: hostID, displayName: displayName, mcPeerID: peerID))
             }
             
@@ -181,7 +191,13 @@ extension NetworkingController : MCSessionDelegate {
             case .connecting:
                 print("Connecting: \(peerID.displayName)")
             case .notConnected:
-                print("Not Connected: \(peerID.displayName)")
+                if let disconnectingUser = self.getUserDataFromPeerID(peerID: peerID) {
+                    print("Not Connected: \(disconnectingUser.displayName)")
+                }
+                else {
+                    print("Unknown user disconnecting....")
+                }
+                
                 self.appState.connectedPeers.removeAll { $0.mcPeerID == peerID }
                 self.broadcastConnectedPeersList()
             @unknown default:

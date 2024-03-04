@@ -8,10 +8,6 @@
 import SwiftUI
 
 
-struct Player {
-   var displayName : String
-}
-
 struct TableView: View {
     @EnvironmentObject var appState : AppState
     
@@ -37,7 +33,7 @@ struct TableView: View {
                  ZStack {
                      Circle()
                          .frame(width: 60)
-                     Text(appState.connectedPeers[index].id == appState.UID ? "Me" : "Someone else")
+                     Text(appState.connectedPeers[index].displayName)
                          .foregroundStyle(Color(.white))
                  }
                  .position(x: center.x + radius * cos(CGFloat(index) * 2 * .pi / CGFloat(appState.connectedPeers.count) - .pi / 2.0),
