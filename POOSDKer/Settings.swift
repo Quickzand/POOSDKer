@@ -8,6 +8,6 @@
 import Foundation
 
 
-class Settings {
-    @Published var displayName : String = ""
+struct Settings : Codable {
+    var displayName : String = ""
 }

@@ -12,13 +12,6 @@ struct HostGameView: View {
     var body: some View {
         VStack {
             NavigationLink("Start Lobby", destination: LobbyView())
-            Button {
-                
-                
-            } label: {
-                Text("Start Host")
-            }
-            NavigationLink("Lobby", destination: LobbyView())
         }
     }
 }

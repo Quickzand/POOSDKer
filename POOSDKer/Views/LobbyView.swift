@@ -14,11 +14,14 @@ struct LobbyView: View {
     
     var body: some View {
         VStack {
-            Text("Lobby")
+            Text("Lobby").font(.title)
+                .padding()
+            Spacer()
             VStack {
                 TableView()
             }
-            NavigationLink("Start Game", destination: PlayGameView())
+            Spacer()
+            NavigationLink("Start Game", destination: PlayGameView()).disabled(!self.appState.isHost)
         }
         .onAppear {
             if let peerHost = peerHost {
@@ -40,5 +43,5 @@ struct LobbyView: View {
 }
 
 #Preview {
-    LobbyView()
+    LobbyView().environmentObject(AppState())
 }
