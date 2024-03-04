@@ -23,8 +23,15 @@ class AppState : ObservableObject {
         @Published var connectedPeers : [Peer] = []
     
     
-    var isHost : Bool = false
-    
+    var isHost : Bool {
+        if let hostPeer = hostPeer {
+            return hostPeer.id == UID
+        }
+        else {
+            return false 
+        }
+    }
+    var hostPeer : Peer? = nil
     
     
     var UID : String = UUID().uuidString

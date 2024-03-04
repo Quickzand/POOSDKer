@@ -10,4 +10,5 @@ import Foundation
 
 struct Settings : Codable {
     var displayName : String = ""
+    var playerColor : String = "#000000"
 }

@@ -77,15 +77,18 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         self.serviceAdvertiser = MCNearbyServiceAdvertiser(peer: appState.peerID, discoveryInfo: discoveryInfo, serviceType: serviceType)
         self.serviceAdvertiser.delegate = self
         appState.connectedPeers = []
-        appState.connectedPeers.append(Peer(id: appState.UID, displayName: appState.settings.displayName, mcPeerID:appState.peerID))
-        appState.isHost = true
+        appState.connectedPeers.append(Peer(id: appState.UID, displayName: appState.settings.displayName, playerColor: appState.settings.playerColor, mcPeerID:appState.peerID))
+        appState.hostPeer = appState.connectedPeers[0]
         serviceAdvertiser.startAdvertisingPeer()
+        
+        
      
     }
     
     func stopHosting() {
         print("Stopping hosting...")
         serviceAdvertiser.stopAdvertisingPeer()
+        appState.hostPeer = nil
     }
     
     func startBrowsing() {
@@ -100,24 +103,30 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     }
     
     
-    func invitePeer(_ peer: MCPeerID) {
-        appState.isHost = false
-        let infoToSend = ["displayName": appState.settings.displayName, "id": appState.UID]
-        if let context = try? JSONEncoder().encode(infoToSend) {
-            serviceBrowser.invitePeer(peer, to: mcSession, withContext: context, timeout: 30)
+    func requestToJoinHost(hostPeer: Peer) {
+        let infoToSend = ["displayName": appState.settings.displayName, "id": appState.UID, "playerColor": appState.settings.playerColor]
+        if let peerID = hostPeer.mcPeerID {
+            if let context = try? JSONEncoder().encode(infoToSend) {
+                serviceBrowser.invitePeer(peerID, to: mcSession, withContext: context, timeout: 30)
+                appState.hostPeer = hostPeer;
+            }
+        }
+        else {
+            print("Attempting to connect to host without knowledge of mcPeerID")
         }
     }
     
     
     func disconnectFromHost() {
         mcSession.disconnect()
+        appState.hostPeer = nil;
     }
     
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
         if let context = context, let receivedInfo = try? JSONDecoder().decode([String: String].self, from: context) {
             // Now you have the additional info
-            if let displayName = receivedInfo["displayName"], let uniqueID = receivedInfo["id"] {
-                self.appState.connectedPeers.append(Peer(id: uniqueID, displayName: displayName, mcPeerID: peerID))
+            if let displayName = receivedInfo["displayName"], let uniqueID = receivedInfo["id"], let playerColor = receivedInfo["playerColor"] {
+                self.appState.connectedPeers.append(Peer(id: uniqueID, displayName: displayName, playerColor: playerColor, mcPeerID: peerID))
                 print("Connecting user with name: " + displayName)
             }
         }
@@ -129,7 +138,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     
     // !! It may make sense in the future to abstract out the process of broadcasting
     func broadcastConnectedPeersList() {
-        let peersToSend = appState.connectedPeers.map { Peer(id: $0.id, displayName: $0.displayName) }
+        let peersToSend = appState.connectedPeers.map { Peer(id: $0.id, displayName: $0.displayName, playerColor: $0.playerColor) }
         do {
             let data = try JSONEncoder().encode(peersToSend)
             try mcSession.send(data, toPeers: mcSession.connectedPeers, with: .reliable)
@@ -154,13 +163,14 @@ extension NetworkingController : MCNearbyServiceBrowserDelegate {
         if let info = info {
             let displayName = info["displayName"] ?? "Unknown"
             let hostID = info["hostID"] ?? "UnknownID"
+            let playerColor = info["playerColor"] ?? "UnknownID"
             
             print("Discovered a peer: \(displayName) with ID: \(hostID)")
             if(!self.appState.discoveredPeers.contains(where: {tempPeer in
                 return tempPeer.id == hostID
             })) {
                 print("Discovered host ")
-                self.appState.discoveredPeers.append(Peer(id: hostID, displayName: displayName, mcPeerID: peerID))
+                self.appState.discoveredPeers.append(Peer(id: hostID, displayName: displayName, playerColor: playerColor, mcPeerID: peerID))
             }
             
         }
@@ -209,7 +219,9 @@ extension NetworkingController : MCSessionDelegate {
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         DispatchQueue.main.async {
             do {
+                print("HERE1")
                 let decodedPeers = try JSONDecoder().decode([Peer].self, from: data)
+                print("HERE2")
                 self.appState.connectedPeers = decodedPeers
             } catch {
                 print("Error decoding peer data: \(error)")
@@ -236,18 +248,21 @@ extension NetworkingController : MCSessionDelegate {
 struct Peer: Identifiable, Codable {
     var id: String // Use a unique identifier that you can match with MCPeerID.displayName
     var displayName: String
+    var playerColor : String
     var mcPeerID: MCPeerID?
 
     // Since MCPeerID is not Codable, we exclude it from the encoding process
     enum CodingKeys: String, CodingKey {
         case id
         case displayName
+        case playerColor
     }
 
     // Initialize with MCPeerID optionally
-    init(id: String, displayName: String, mcPeerID: MCPeerID? = nil) {
+    init(id: String, displayName: String, playerColor: String , mcPeerID: MCPeerID? = nil) {
         self.id = id
         self.displayName = displayName
+        self.playerColor = playerColor
         self.mcPeerID = mcPeerID
     }
 }

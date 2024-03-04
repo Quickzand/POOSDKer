@@ -25,7 +25,7 @@ struct LobbyView: View {
         }
         .onAppear {
             if let peerHost = peerHost {
-                appState.networkingController?.invitePeer(peerHost.mcPeerID!)
+                appState.networkingController?.requestToJoinHost(hostPeer: peerHost)
             }
             else {
                 appState.networkingController?.startHosting();
