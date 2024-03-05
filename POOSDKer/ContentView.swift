@@ -13,26 +13,29 @@ struct ContentView: View {
         NavigationStack {
             VStack {
                 VStack {
-                    Text("POOSDker")
-                        .font(.title)
-                    Text("Vesion: 0.0.1")
-                        .font(.subheadline)
+                    VStack {
+                        Text("POOSDker")
+                            .font(.title)
+                        Text("Vesion: 0.0.1")
+                            .font(.subheadline)
+                    }
+                    .padding()
+                    Spacer()
+                    NavigationLink("Host Game", destination: HostGameView())
+                        .padding()
+                        .background(.regularMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    NavigationLink("Join Game", destination: JoinGameView())
+                        .padding()
+                        .background(.regularMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    NavigationLink("Settings", destination: SettingsView())
+                        .padding()
+                        .background(.regularMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    Spacer()
                 }
-                    .padding()
-                Spacer()
-                NavigationLink("Host Game", destination: HostGameView())
-                    .padding()
-                    .background(.regularMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
-                NavigationLink("Join Game", destination: JoinGameView())
-                    .padding()
-                    .background(.regularMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
-                NavigationLink("Settings", destination: SettingsView())
-                    .padding()
-                    .background(.regularMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
-                Spacer()
+                
             }
         }
     }

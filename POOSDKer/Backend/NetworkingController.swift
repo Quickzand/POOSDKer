@@ -136,23 +136,60 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     }
     
     
-    // !! It may make sense in the future to abstract out the process of broadcasting
-    func broadcastConnectedPeersList() {
-        let peersToSend = appState.connectedPeers.map { Peer(id: $0.id, displayName: $0.displayName, playerColor: $0.playerColor) }
-        do {
-            let data = try JSONEncoder().encode(peersToSend)
-            try mcSession.send(data, toPeers: mcSession.connectedPeers, with: .reliable)
-        } catch {
-            print("Error encoding or sending peers: \(error)")
-        }
+    
+    
+    struct BroadcastData: Decodable {
+        let commandType: String
+        let peers: [Peer]?
     }
     
+    
+//    MARK: All types of commands that can be sent
+    enum BroadcastCommandType : String {
+        case shareConnectedPeerList = "sharePeerList"
+        case startGame = "startGame"
+    }
+    
+    
+    func broadcastCommandToPeers(broadcastCommandType: BroadcastCommandType) {
+        var broadcastData: [String: Any] = [:] // Change to [String: Any] to handle various data types
+        broadcastData["commandType"] = broadcastCommandType.rawValue
+        
+        switch broadcastCommandType {
+        case .shareConnectedPeerList:
+            // Prepare the list of peers to be shared
+            let peersToSend = appState.connectedPeers.map {
+                ["id": $0.id, "displayName": $0.displayName, "playerColor": $0.playerColor]
+            }
+            broadcastData["peers"] = peersToSend
+            print("Sharing peer list...")
+            
+        case .startGame:
+            print("Starting game...")
+            // Additional command-specific data can be added here if necessary
+            
+        default:
+            print("Unrecognized Command")
+        }
+        
+        do {
+            let data = try JSONSerialization.data(withJSONObject: broadcastData, options: [])
+            try mcSession.send(data, toPeers: mcSession.connectedPeers, with: .reliable)
+        } catch {
+            print("Error encoding or sending command: \(error)")
+        }
+    }
     
     func getUserDataFromPeerID(peerID: MCPeerID) -> Peer?  {
         return self.appState.connectedPeers.first(where: {peer in
             return peer.mcPeerID == peerID
         })
     }
+    
+    
+    
+    
+
  
 }
 
@@ -196,7 +233,7 @@ extension NetworkingController : MCSessionDelegate {
             case .connected:
                 print("Connected: \(peerID.displayName)")
                 if self.appState.isHost {
-                                 self.broadcastConnectedPeersList()
+                    self.broadcastCommandToPeers(broadcastCommandType: .shareConnectedPeerList)
                              }
             case .connecting:
                 print("Connecting: \(peerID.displayName)")
@@ -209,7 +246,7 @@ extension NetworkingController : MCSessionDelegate {
                 }
                 
                 self.appState.connectedPeers.removeAll { $0.mcPeerID == peerID }
-                self.broadcastConnectedPeersList()
+                self.broadcastCommandToPeers(broadcastCommandType: .shareConnectedPeerList)
             @unknown default:
                 fatalError("Unknown state received: \(state)")
             }
@@ -219,12 +256,28 @@ extension NetworkingController : MCSessionDelegate {
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         DispatchQueue.main.async {
             do {
-                print("HERE1")
-                let decodedPeers = try JSONDecoder().decode([Peer].self, from: data)
-                print("HERE2")
-                self.appState.connectedPeers = decodedPeers
+                // Decode the data into your structured format
+                let decodedData = try JSONDecoder().decode(BroadcastData.self, from: data)
+                
+                // Handle the command based on the commandType
+                switch decodedData.commandType {
+                case BroadcastCommandType.shareConnectedPeerList.rawValue:
+                    if let peers = decodedData.peers {
+                        // Update your app state with the decoded peers
+                        self.appState.connectedPeers = peers
+                        print("Updated peer list received.")
+                    }
+                    
+                case BroadcastCommandType.startGame.rawValue:
+                    print("Start game command received.")
+                    self.appState.isInGame = true
+                    
+                default:
+                    print("Unrecognized command received.")
+                }
+                
             } catch {
-                print("Error decoding peer data: \(error)")
+                print("Error decoding received data: \(error)")
             }
         }
     }

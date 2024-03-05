@@ -79,5 +79,5 @@ struct PlayingCard: View {
 }
 
 #Preview {
-    PlayingCard(suit: .Diamonds, face: .Two)
+    PlayingCard(suit: .Spades, face: .Queen)
 }

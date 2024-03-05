@@ -14,6 +14,7 @@ struct LobbyView: View {
     
     var body: some View {
         VStack {
+ 
             Text("Lobby").font(.title)
                 .padding()
             Spacer()
@@ -21,7 +22,13 @@ struct LobbyView: View {
                 TableView()
             }
             Spacer()
-            NavigationLink("Start Game", destination: PlayGameView()).disabled(!self.appState.isHost)
+            Button{
+                appState.isInGame = true
+                appState.networkingController?.broadcastCommandToPeers(broadcastCommandType: .startGame)
+            }
+        label: {
+            Text("Start Game")
+        }.disabled(!self.appState.isHost)
         }
         .onAppear {
             if let peerHost = peerHost {
@@ -38,6 +45,9 @@ struct LobbyView: View {
             else {
                 appState.networkingController?.disconnectFromHost()
             }
+        }
+        .navigationDestination(isPresented: $appState.isInGame) {
+            PlayGameView()  .navigationBarBackButtonHidden(true)
         }
     }
 }

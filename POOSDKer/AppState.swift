@@ -31,6 +31,9 @@ class AppState : ObservableObject {
             return false 
         }
     }
+    
+    
+    @Published var isInGame : Bool = false
     var hostPeer : Peer? = nil
     
     
