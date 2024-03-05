@@ -52,17 +52,15 @@ struct PlayingCard: View {
     var body: some View {
         VStack {
             HStack {
-                    Image(systemName: suit.rawValue)
-                    Text(face.rawValue)
+                Image(systemName: suit.rawValue)
+                Text(face.rawValue)
                 Spacer()
-                
             }
             Spacer()
             HStack {
                 Image(systemName: suit.rawValue)
                     .scaleEffect(3)
             }
-             
             Spacer()
             HStack {
                 Spacer()
@@ -81,5 +79,5 @@ struct PlayingCard: View {
 }
 
 #Preview {
-    PlayingCard(suit: .Spades, face: .Two)
+    PlayingCard(suit: .Diamonds, face: .Two)
 }
