@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		342541772B9063C8002545BD /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342541762B9063C8002545BD /* Settings.swift */; };
+		3433FF7F2B968B4800C90F8B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3433FF7E2B968B4800C90F8B /* Extensions.swift */; };
 		344582262B816A530008524D /* POOSDKerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344582252B816A530008524D /* POOSDKerApp.swift */; };
 		344582282B816A530008524D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344582272B816A530008524D /* ContentView.swift */; };
 		3445822A2B816A540008524D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 344582292B816A540008524D /* Assets.xcassets */; };
@@ -22,7 +24,7 @@
 		34C7B2932B8E6317007DA1EB /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2922B8E6317007DA1EB /* ResultsView.swift */; };
 		34C7B2962B8E6A4C007DA1EB /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2952B8E6A4C007DA1EB /* AppState.swift */; };
 		34C7B2982B8E6A9F007DA1EB /* NetworkingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */; };
-		34C7B29A2B8E6B30007DA1EB /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2992B8E6B30007DA1EB /* Settings.swift */; };
+		34F998312B9346590077B62F /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F998302B9346590077B62F /* TableView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +46,8 @@
 
 /* Begin PBXFileReference section */
 		342541752B8F1A8F002545BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		342541762B9063C8002545BD /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		3433FF7E2B968B4800C90F8B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		344582222B816A530008524D /* POOSDKer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = POOSDKer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		344582252B816A530008524D /* POOSDKerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POOSDKerApp.swift; sourceTree = "<group>"; };
 		344582272B816A530008524D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -62,7 +66,7 @@
 		34C7B2922B8E6317007DA1EB /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
 		34C7B2952B8E6A4C007DA1EB /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingController.swift; sourceTree = "<group>"; };
-		34C7B2992B8E6B30007DA1EB /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		34F998302B9346590077B62F /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +117,9 @@
 		344582242B816A530008524D /* POOSDKer */ = {
 			isa = PBXGroup;
 			children = (
+				3433FF7E2B968B4800C90F8B /* Extensions.swift */,
+				342541762B9063C8002545BD /* Settings.swift */,
+				34C7B2952B8E6A4C007DA1EB /* AppState.swift */,
 				342541752B8F1A8F002545BD /* Info.plist */,
 				34C7B2942B8E6A3F007DA1EB /* Backend */,
 				34C7B2872B8E5AC7007DA1EB /* Views */,
@@ -156,6 +163,7 @@
 				34C7B28A2B8E5CE6007DA1EB /* JoinGameView.swift */,
 				34C7B28C2B8E5D11007DA1EB /* SettingsView.swift */,
 				34C7B28E2B8E5E00007DA1EB /* LobbyView.swift */,
+				34F998302B9346590077B62F /* TableView.swift */,
 				34C7B2902B8E62D9007DA1EB /* PlayGameView.swift */,
 				34C7B2922B8E6317007DA1EB /* ResultsView.swift */,
 			);
@@ -165,8 +173,6 @@
 		34C7B2942B8E6A3F007DA1EB /* Backend */ = {
 			isa = PBXGroup;
 			children = (
-				34C7B2952B8E6A4C007DA1EB /* AppState.swift */,
-				34C7B2992B8E6B30007DA1EB /* Settings.swift */,
 				34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */,
 			);
 			path = Backend;
@@ -303,15 +309,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				344582282B816A530008524D /* ContentView.swift in Sources */,
+				34F998312B9346590077B62F /* TableView.swift in Sources */,
 				34C7B2932B8E6317007DA1EB /* ResultsView.swift in Sources */,
 				344582262B816A530008524D /* POOSDKerApp.swift in Sources */,
 				34C7B2962B8E6A4C007DA1EB /* AppState.swift in Sources */,
 				34C7B2892B8E5ADD007DA1EB /* HostGameView.swift in Sources */,
 				34C7B28B2B8E5CE6007DA1EB /* JoinGameView.swift in Sources */,
+				3433FF7F2B968B4800C90F8B /* Extensions.swift in Sources */,
+				342541772B9063C8002545BD /* Settings.swift in Sources */,
 				34C7B28D2B8E5D11007DA1EB /* SettingsView.swift in Sources */,
 				34C7B2912B8E62D9007DA1EB /* PlayGameView.swift in Sources */,
 				34C7B28F2B8E5E00007DA1EB /* LobbyView.swift in Sources */,
-				34C7B29A2B8E6B30007DA1EB /* Settings.swift in Sources */,
 				34C7B2982B8E6A9F007DA1EB /* NetworkingController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

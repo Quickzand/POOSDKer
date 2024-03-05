@@ -6,105 +6,263 @@
 //
 
 import Foundation
-import Network
+import MultipeerConnectivity
 
-
-class NetworkingController  {
-    var hostController : HostNetworkingController = HostNetworkingController()
-    var participantController : ParticipantNetworkingController = ParticipantNetworkingController()
-}
-
-
-class HostNetworkingController {
-    var listener: NWListener?
-
-    func startHosting() {
-        do {
-            let parameters = NWParameters.tcp
-            parameters.includePeerToPeer = true
-
-            
-            let serviceType = "_poosdker._tcp"
-            let serviceName = "POOSDker"
-
-            // THIS PUTS IT ON A RANDOM PORT
-            listener = try NWListener(using: parameters)
-            listener?.service = NWListener.Service(name: serviceName, type: serviceType)
-
-            listener?.stateUpdateHandler = { newState in
-                switch newState {
-                case .ready:
-                    print("Listener ready on port \(self.listener?.port ?? 0)")
-                case .failed(let error):
-                    print("Listener failed to start, error: \(error)")
-                default:
-                    break
-                }
-            }
-
-            listener?.newConnectionHandler = { connection in
-                // MARK: Handle the connection with a response for the websocket in the future
-                connection.start(queue: .main)
-            }
-
-            listener?.start(queue: .main)
-        } catch {
-            print("Unable to create NWListener: \(error.localizedDescription)")
-        }
-    }
-
-    func stopHosting() {
-        listener?.cancel()
-        listener = nil
-    }
-}
-
-
-class ParticipantNetworkingController {
-    private var browser: NWBrowser?
-
-    func startBrowsing() {
-        // Sets up peer to peer params
-        let parameters = NWParameters()
-        parameters.includePeerToPeer = true
-
+class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiserDelegate {
+    
+    var appState : AppState
+    
+    
+    
+    var mcSession: MCSession!
+    var serviceAdvertiser: MCNearbyServiceAdvertiser!
+    var serviceBrowser: MCNearbyServiceBrowser!
+    let serviceType = "poosdker"
+    
+    init(appState: AppState) {
+        self.appState = appState
+        super.init()
         
-        let serviceType = "_poosdker._tcp"
-        let browserDescriptor = NWBrowser.Descriptor.bonjour(type: serviceType, domain: "local")
-        browser = NWBrowser(for: browserDescriptor, using: parameters)
-
-        // Handls results
-        browser?.stateUpdateHandler = { state in
-            switch state {
-            case .ready:
-                print("Browser is ready.")
-            case .failed(let error):
-                print("Browser failed with error: \(error)")
-            default:
-                break
+        // Setup peer and session
+        self.appState.peerID = MCPeerID(displayName: UIDevice.current.name)
+        self.mcSession = MCSession(peer: appState.peerID, securityIdentity: nil, encryptionPreference: .required)
+        self.mcSession.delegate = self
+        
+        
+        // Setup browser
+        self.serviceBrowser = MCNearbyServiceBrowser(peer: appState.peerID, serviceType: serviceType)
+        self.serviceBrowser.delegate = self
+    }
+    
+    func sendData(_ data: Data) {
+        guard !mcSession.connectedPeers.isEmpty else { return }
+        
+        do {
+            try mcSession.send(data, toPeers: mcSession.connectedPeers, with: .reliable)
+        } catch let error {
+            print("Error sending data: \(error.localizedDescription)")
+        }
+    }
+    
+    func sendDataToAllPeers(_ data: Data) {
+        guard !mcSession.connectedPeers.isEmpty else { return }
+        
+        do {
+            try mcSession.send(data, toPeers: mcSession.connectedPeers, with: .reliable)
+        } catch {
+            print("Error sending data to all peers: \(error)")
+        }
+    }
+    
+    func updateAndBroadcastConnectedUsers() {
+        let connectedPeers = mcSession.connectedPeers.map { $0.displayName }
+        
+        // Encode the list of connected peer names into Data
+        do {
+            let data = try JSONEncoder().encode(connectedPeers)
+            sendDataToAllPeers(data)
+        } catch {
+            print("Error encoding connected peers: \(error)")
+        }
+    }
+    
+    
+    
+    
+    
+    func startHosting() {
+        print("Starting hosting...")
+        // Setup advertiser with discovery info including both displayName and a unique ID
+        let discoveryInfo = ["displayName": appState.settings.displayName, "hostID": self.appState.UID]
+        self.serviceAdvertiser = MCNearbyServiceAdvertiser(peer: appState.peerID, discoveryInfo: discoveryInfo, serviceType: serviceType)
+        self.serviceAdvertiser.delegate = self
+        appState.connectedPeers = []
+        appState.connectedPeers.append(Peer(id: appState.UID, displayName: appState.settings.displayName, playerColor: appState.settings.playerColor, mcPeerID:appState.peerID))
+        appState.hostPeer = appState.connectedPeers[0]
+        serviceAdvertiser.startAdvertisingPeer()
+        
+        
+     
+    }
+    
+    func stopHosting() {
+        print("Stopping hosting...")
+        serviceAdvertiser.stopAdvertisingPeer()
+        appState.hostPeer = nil
+    }
+    
+    func startBrowsing() {
+        print("Starting browsing...")
+        appState.discoveredPeers = []
+        serviceBrowser.startBrowsingForPeers()
+    }
+    
+    func stopBrowsing() {
+        print("Stopping browsing...")
+        serviceBrowser.stopBrowsingForPeers()
+    }
+    
+    
+    func requestToJoinHost(hostPeer: Peer) {
+        let infoToSend = ["displayName": appState.settings.displayName, "id": appState.UID, "playerColor": appState.settings.playerColor]
+        if let peerID = hostPeer.mcPeerID {
+            if let context = try? JSONEncoder().encode(infoToSend) {
+                serviceBrowser.invitePeer(peerID, to: mcSession, withContext: context, timeout: 30)
+                appState.hostPeer = hostPeer;
             }
         }
-
-        browser?.browseResultsChangedHandler = { results, changes in
-            for result in results {
-                switch result.endpoint {
-                case .service(let name, let type, let domain, let interface):
-                    print("Found service: \(name) \t \(type) \t \(domain) \t \(interface)")
-                    // MARK: - Connect to service in future here
-                default:
-                    break
-                }
+        else {
+            print("Attempting to connect to host without knowledge of mcPeerID")
+        }
+    }
+    
+    
+    func disconnectFromHost() {
+        mcSession.disconnect()
+        appState.hostPeer = nil;
+    }
+    
+    func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
+        if let context = context, let receivedInfo = try? JSONDecoder().decode([String: String].self, from: context) {
+            // Now you have the additional info
+            if let displayName = receivedInfo["displayName"], let uniqueID = receivedInfo["id"], let playerColor = receivedInfo["playerColor"] {
+                self.appState.connectedPeers.append(Peer(id: uniqueID, displayName: displayName, playerColor: playerColor, mcPeerID: peerID))
+                print("Connecting user with name: " + displayName)
             }
         }
+        
+        // You can decide whether to accept the invitation based on the received information
+        invitationHandler(true, mcSession)
+    }
+    
+    
+    // !! It may make sense in the future to abstract out the process of broadcasting
+    func broadcastConnectedPeersList() {
+        let peersToSend = appState.connectedPeers.map { Peer(id: $0.id, displayName: $0.displayName, playerColor: $0.playerColor) }
+        do {
+            let data = try JSONEncoder().encode(peersToSend)
+            try mcSession.send(data, toPeers: mcSession.connectedPeers, with: .reliable)
+        } catch {
+            print("Error encoding or sending peers: \(error)")
+        }
+    }
+    
+    
+    func getUserDataFromPeerID(peerID: MCPeerID) -> Peer?  {
+        return self.appState.connectedPeers.first(where: {peer in
+            return peer.mcPeerID == peerID
+        })
+    }
+ 
+}
 
-        // Start browsing on the main thread
-        // MARK: We may wanna change this later to be on its own thread to have stuff updating real time, might be complicated though...
-        browser?.start(queue: .main)
+
+
+extension NetworkingController : MCNearbyServiceBrowserDelegate {
+    func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
+        if let info = info {
+            let displayName = info["displayName"] ?? "Unknown"
+            let hostID = info["hostID"] ?? "UnknownID"
+            let playerColor = info["playerColor"] ?? "UnknownID"
+            
+            print("Discovered a peer: \(displayName) with ID: \(hostID)")
+            if(!self.appState.discoveredPeers.contains(where: {tempPeer in
+                return tempPeer.id == hostID
+            })) {
+                print("Discovered host ")
+                self.appState.discoveredPeers.append(Peer(id: hostID, displayName: displayName, playerColor: playerColor, mcPeerID: peerID))
+            }
+            
+        }
     }
 
-    func stopBrowsing() {
-        browser?.cancel()
-        browser = nil
-        print("Browsing stopped.")
+    
+    func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
+        DispatchQueue.main.async {
+            self.appState.discoveredPeers.removeAll { $0.mcPeerID == peerID }
+        }
+    }
+    
+}
+
+
+// All session control code
+extension NetworkingController : MCSessionDelegate {
+    
+    
+    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+        DispatchQueue.main.async {
+            switch state {
+            case .connected:
+                print("Connected: \(peerID.displayName)")
+                if self.appState.isHost {
+                                 self.broadcastConnectedPeersList()
+                             }
+            case .connecting:
+                print("Connecting: \(peerID.displayName)")
+            case .notConnected:
+                if let disconnectingUser = self.getUserDataFromPeerID(peerID: peerID) {
+                    print("Not Connected: \(disconnectingUser.displayName)")
+                }
+                else {
+                    print("Unknown user disconnecting....")
+                }
+                
+                self.appState.connectedPeers.removeAll { $0.mcPeerID == peerID }
+                self.broadcastConnectedPeersList()
+            @unknown default:
+                fatalError("Unknown state received: \(state)")
+            }
+        }
+    }
+      
+    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        DispatchQueue.main.async {
+            do {
+                print("HERE1")
+                let decodedPeers = try JSONDecoder().decode([Peer].self, from: data)
+                print("HERE2")
+                self.appState.connectedPeers = decodedPeers
+            } catch {
+                print("Error decoding peer data: \(error)")
+            }
+        }
+    }
+    
+    
+    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+        print("Here")
+    }
+    
+    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
+        print("Here")
+    }
+    
+    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+        print("Here")
+    }
+    
+}
+
+
+struct Peer: Identifiable, Codable {
+    var id: String // Use a unique identifier that you can match with MCPeerID.displayName
+    var displayName: String
+    var playerColor : String
+    var mcPeerID: MCPeerID?
+
+    // Since MCPeerID is not Codable, we exclude it from the encoding process
+    enum CodingKeys: String, CodingKey {
+        case id
+        case displayName
+        case playerColor
+    }
+
+    // Initialize with MCPeerID optionally
+    init(id: String, displayName: String, playerColor: String , mcPeerID: MCPeerID? = nil) {
+        self.id = id
+        self.displayName = displayName
+        self.playerColor = playerColor
+        self.mcPeerID = mcPeerID
     }
 }

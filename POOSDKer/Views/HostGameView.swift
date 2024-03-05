@@ -11,13 +11,7 @@ struct HostGameView: View {
     @EnvironmentObject var appState : AppState
     var body: some View {
         VStack {
-            Button {
-                appState.networkingController.hostController.startHosting()
-                
-            } label: {
-                Text("Start Host")
-            }
-            NavigationLink("Lobby", destination: LobbyView())
+            NavigationLink("Start Lobby", destination: LobbyView())
         }
     }
 }

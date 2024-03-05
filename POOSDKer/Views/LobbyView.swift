@@ -8,14 +8,40 @@
 import SwiftUI
 
 struct LobbyView: View {
+    @EnvironmentObject var appState : AppState
+    
+    var peerHost : Peer? = nil
+    
     var body: some View {
         VStack {
-            Text("Lobby")
-            NavigationLink("Play Game", destination: PlayGameView())
+            Text("Lobby").font(.title)
+                .padding()
+            Spacer()
+            VStack {
+                TableView()
+            }
+            Spacer()
+            NavigationLink("Start Game", destination: PlayGameView()).disabled(!self.appState.isHost)
+        }
+        .onAppear {
+            if let peerHost = peerHost {
+                appState.networkingController?.requestToJoinHost(hostPeer: peerHost)
+            }
+            else {
+                appState.networkingController?.startHosting();
+            }
+        }
+        .onDisappear {
+            if(appState.isHost) {
+                appState.networkingController?.stopHosting();
+            }
+            else {
+                appState.networkingController?.disconnectFromHost()
+            }
         }
     }
 }
 
 #Preview {
-    LobbyView()
+    LobbyView().environmentObject(AppState())
 }
