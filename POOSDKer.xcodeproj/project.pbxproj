@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		34017E4D2B97B45700B7FB72 /* PlayingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34017E4C2B97B45700B7FB72 /* PlayingCard.swift */; };
 		342541772B9063C8002545BD /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342541762B9063C8002545BD /* Settings.swift */; };
 		3433FF7F2B968B4800C90F8B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3433FF7E2B968B4800C90F8B /* Extensions.swift */; };
 		344582262B816A530008524D /* POOSDKerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344582252B816A530008524D /* POOSDKerApp.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		34017E4C2B97B45700B7FB72 /* PlayingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayingCard.swift; sourceTree = "<group>"; };
 		342541752B8F1A8F002545BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		342541762B9063C8002545BD /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		3433FF7E2B968B4800C90F8B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 				34C7B2882B8E5ADD007DA1EB /* HostGameView.swift */,
 				34C7B28A2B8E5CE6007DA1EB /* JoinGameView.swift */,
 				34C7B28C2B8E5D11007DA1EB /* SettingsView.swift */,
+				34017E4C2B97B45700B7FB72 /* PlayingCard.swift */,
 				34C7B28E2B8E5E00007DA1EB /* LobbyView.swift */,
 				34F998302B9346590077B62F /* TableView.swift */,
 				34C7B2902B8E62D9007DA1EB /* PlayGameView.swift */,
@@ -320,6 +323,7 @@
 				34C7B28D2B8E5D11007DA1EB /* SettingsView.swift in Sources */,
 				34C7B2912B8E62D9007DA1EB /* PlayGameView.swift in Sources */,
 				34C7B28F2B8E5E00007DA1EB /* LobbyView.swift in Sources */,
+				34017E4D2B97B45700B7FB72 /* PlayingCard.swift in Sources */,
 				34C7B2982B8E6A9F007DA1EB /* NetworkingController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
