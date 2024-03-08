@@ -11,7 +11,6 @@ struct ContentView: View {
     @EnvironmentObject var appState : AppState
     var body: some View {
         NavigationStack {
-            VStack {
                 VStack {
                     VStack {
                         Text("POOSDker")
@@ -34,9 +33,11 @@ struct ContentView: View {
                         .background(.regularMaterial)
                         .clipShape(RoundedRectangle(cornerRadius: 10.0))
                     Spacer()
+                    Text("[POOSD @ Spring 2024 || Aintzane Perez Masache, Amy Gonzalez, Gavin Cruz, Matthew Sand, Maximus Smith]").font(.footnote)
+                        
+                        .padding(.bottom, 0)
                 }
                 
-            }
         }
     }
 }
