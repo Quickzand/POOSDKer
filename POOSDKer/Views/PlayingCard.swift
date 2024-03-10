@@ -10,7 +10,7 @@ import SwiftUI
 struct PlayingCard: View {
     
     enum Suit : String {
-        case Hearts = "heart.slash.fill"
+        case Hearts = "suit.heart.fill"
         case Spades = "suit.spade.fill"
         case Diamonds = "suit.diamond.fill"
         case Clubs = "suit.club.fill"
@@ -41,15 +41,30 @@ struct PlayingCard: View {
     
     
     private var faceColor : Color {
-        if suit == .Hearts || suit == .Diamonds {
-            return Color.red
+        switch suit {
+        case .Hearts:
+            Color("Hearts")
+        case .Spades:
+            Color("Spades")
+        case .Diamonds:
+            Color("Diamonds")
+        case .Clubs:
+            Color("Clubs")
         }
-        return Color.purple
     }
+    
+    
+    @State var isFlipped : Bool = false
+    
+    @State var topRotation = 0.0
+    @State var backRotation = -90.0
     
     
     
     var body: some View {
+        ZStack {
+            
+        
         VStack {
             HStack {
                 Image(systemName: suit.rawValue)
@@ -67,17 +82,84 @@ struct PlayingCard: View {
                 Text(face.rawValue)
                 Image(systemName: suit.rawValue)
             }
-        }
+            }
         .padding()
         .foregroundStyle(faceColor)
-        .frame(width: 200, height: 300)
-        .background(.white)
+        .frame(maxWidth: 200, maxHeight: 300)
+        .background(Color("OutsetBackground"))
         .clipShape(RoundedRectangle(cornerRadius: 10.0))
-        .shadow(radius: /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
         
+        .rotation3DEffect(
+            Angle(degrees: topRotation),
+                                  axis: (x: 0.0, y: 1.0, z: 0.0)
+        )
+            
+            VStack {
+                Image(systemName: Suit.Diamonds.rawValue)
+                    .foregroundColor(Color("Diamonds"))
+                    .padding(.all, 10)
+                Image(systemName: Suit.Hearts.rawValue)
+                    .foregroundColor(Color("Hearts"))
+                    .padding(.all, 10)
+                Image(systemName: Suit.Clubs.rawValue)
+                    .foregroundColor(Color("Clubs"))
+                    .padding(.all, 10)
+                Image(systemName: Suit.Spades.rawValue)
+                    .foregroundColor(Color("Spades"))
+                    .padding(.all, 10)
+            }
+            .font(.system(size: 30.0))
+            .padding()
+            .foregroundStyle(faceColor)
+            .frame(maxWidth: 200, maxHeight: 300)
+            .background(Color("OutsetBackground"))
+            .border(Color(hex: "#CEB064"), width: 25)
+            .border(Color(hex: "#3B3B3B"), width: 20)
+            .clipShape(RoundedRectangle(cornerRadius: 10.0))
+            
+            .rotation3DEffect(
+                Angle(degrees: backRotation),
+                                      axis: (x: 0.0, y: 1.0, z: 0.0)
+            )
+            
+         
+        }.shadow(radius: /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
+            .onChange(of: isFlipped) {
+                setFlipped()
+            }
+            .onAppear {
+                setFlipped(useAnimation: false)
+            }
+    }
+    
+    func setFlipped(useAnimation : Bool = true) {
+        var animationDuration = !useAnimation ? 0 : 0.25
+        if !isFlipped {
+            withAnimation(.linear(duration:animationDuration).delay(animationDuration)) {
+                topRotation = 0
+            }
+            
+            withAnimation(.linear(duration:animationDuration)) {
+                backRotation = -90
+            }
+            
+            
+        }
+        else {
+            withAnimation(.linear(duration:animationDuration)) {
+                topRotation = 90
+            }
+            
+            withAnimation(.linear(duration:animationDuration).delay(animationDuration)) {
+                backRotation = 0
+            }
+        }
     }
 }
 
 #Preview {
     PlayingCard(suit: .Spades, face: .Queen)
 }
+
+
+
