@@ -14,6 +14,8 @@ struct SettingsView: View {
     
     var body: some View {
         VStack {
+            HeaderBanner(text:"Settings", fullWidth: true)
+            Spacer()
             TextField("Display Name", text: $appState.settings.displayName)
                 .frame(maxWidth:.infinity)
                 .multilineTextAlignment(.center)
@@ -26,12 +28,16 @@ struct SettingsView: View {
                 ColorPicker("", selection: $selectedPlayerColor)
                 Spacer()
             }
+            
+            Spacer()
         }.onChange(of: selectedPlayerColor) {
             appState.settings.playerColor = selectedPlayerColor.toHexString()
         }
         .onAppear {
             selectedPlayerColor = Color(hex:appState.settings.playerColor)
         }
+        
+        .withBackground()
         
         
         

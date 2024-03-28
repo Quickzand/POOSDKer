@@ -54,3 +54,19 @@ extension Color {
         return hexString
     }
 }
+
+
+
+struct BackgroundModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(BackgroundView()) // Apply your custom background view here
+    }
+}
+
+extension View {
+    func withBackground() -> some View {
+        self.modifier(BackgroundModifier())
+    }
+}

@@ -15,8 +15,7 @@ struct LobbyView: View {
     var body: some View {
         VStack {
  
-            Text("Lobby").font(.title)
-                .padding()
+            HeaderBanner(text:"Lobby", fullWidth: true)
             Spacer()
             VStack {
                 TableView()
@@ -49,6 +48,7 @@ struct LobbyView: View {
         .navigationDestination(isPresented: $appState.isInGame) {
             PlayGameView()  .navigationBarBackButtonHidden(true)
         }
+        .withBackground()
     }
 }
 

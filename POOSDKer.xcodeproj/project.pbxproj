@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		34017E4D2B97B45700B7FB72 /* PlayingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34017E4C2B97B45700B7FB72 /* PlayingCard.swift */; };
+		34215FF32BA8E93F0006315D /* HeaderBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34215FF22BA8E93F0006315D /* HeaderBanner.swift */; };
 		342541772B9063C8002545BD /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342541762B9063C8002545BD /* Settings.swift */; };
 		3433FF7F2B968B4800C90F8B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3433FF7E2B968B4800C90F8B /* Extensions.swift */; };
 		344582262B816A530008524D /* POOSDKerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344582252B816A530008524D /* POOSDKerApp.swift */; };
@@ -17,6 +18,8 @@
 		344582372B816A540008524D /* POOSDKerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344582362B816A540008524D /* POOSDKerTests.swift */; };
 		344582412B816A540008524D /* POOSDKerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344582402B816A540008524D /* POOSDKerUITests.swift */; };
 		344582432B816A540008524D /* POOSDKerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344582422B816A540008524D /* POOSDKerUITestsLaunchTests.swift */; };
+		34AADB582B9E0C0C00F40FFC /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AADB572B9E0C0C00F40FFC /* BackgroundView.swift */; };
+		34AADB5D2B9E0CD400F40FFC /* feltNoise.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 34AADB5C2B9E0CD400F40FFC /* feltNoise.jpg */; };
 		34C7B2892B8E5ADD007DA1EB /* HostGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2882B8E5ADD007DA1EB /* HostGameView.swift */; };
 		34C7B28B2B8E5CE6007DA1EB /* JoinGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B28A2B8E5CE6007DA1EB /* JoinGameView.swift */; };
 		34C7B28D2B8E5D11007DA1EB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B28C2B8E5D11007DA1EB /* SettingsView.swift */; };
@@ -47,6 +50,7 @@
 
 /* Begin PBXFileReference section */
 		34017E4C2B97B45700B7FB72 /* PlayingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayingCard.swift; sourceTree = "<group>"; };
+		34215FF22BA8E93F0006315D /* HeaderBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderBanner.swift; sourceTree = "<group>"; };
 		342541752B8F1A8F002545BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		342541762B9063C8002545BD /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		3433FF7E2B968B4800C90F8B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -60,6 +64,8 @@
 		3445823C2B816A540008524D /* POOSDKerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = POOSDKerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		344582402B816A540008524D /* POOSDKerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POOSDKerUITests.swift; sourceTree = "<group>"; };
 		344582422B816A540008524D /* POOSDKerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POOSDKerUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		34AADB572B9E0C0C00F40FFC /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
+		34AADB5C2B9E0CD400F40FFC /* feltNoise.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = feltNoise.jpg; sourceTree = "<group>"; };
 		34C7B2882B8E5ADD007DA1EB /* HostGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostGameView.swift; sourceTree = "<group>"; };
 		34C7B28A2B8E5CE6007DA1EB /* JoinGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGameView.swift; sourceTree = "<group>"; };
 		34C7B28C2B8E5D11007DA1EB /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -119,6 +125,8 @@
 		344582242B816A530008524D /* POOSDKer */ = {
 			isa = PBXGroup;
 			children = (
+				34AADB592B9E0C9A00F40FFC /* Assets */,
+				34AADB572B9E0C0C00F40FFC /* BackgroundView.swift */,
 				3433FF7E2B968B4800C90F8B /* Extensions.swift */,
 				342541762B9063C8002545BD /* Settings.swift */,
 				34C7B2952B8E6A4C007DA1EB /* AppState.swift */,
@@ -158,9 +166,26 @@
 			path = POOSDKerUITests;
 			sourceTree = "<group>";
 		};
+		34AADB592B9E0C9A00F40FFC /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				34AADB5C2B9E0CD400F40FFC /* feltNoise.jpg */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		34AADB5E2B9E7F4700F40FFC /* Basic Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Basic Components";
+			sourceTree = "<group>";
+		};
 		34C7B2872B8E5AC7007DA1EB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				34215FF22BA8E93F0006315D /* HeaderBanner.swift */,
+				34AADB5E2B9E7F4700F40FFC /* Basic Components */,
 				34C7B2882B8E5ADD007DA1EB /* HostGameView.swift */,
 				34C7B28A2B8E5CE6007DA1EB /* JoinGameView.swift */,
 				34C7B28C2B8E5D11007DA1EB /* SettingsView.swift */,
@@ -287,6 +312,7 @@
 			files = (
 				3445822D2B816A540008524D /* Preview Assets.xcassets in Resources */,
 				3445822A2B816A540008524D /* Assets.xcassets in Resources */,
+				34AADB5D2B9E0CD400F40FFC /* feltNoise.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,6 +337,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34AADB582B9E0C0C00F40FFC /* BackgroundView.swift in Sources */,
 				344582282B816A530008524D /* ContentView.swift in Sources */,
 				34F998312B9346590077B62F /* TableView.swift in Sources */,
 				34C7B2932B8E6317007DA1EB /* ResultsView.swift in Sources */,
@@ -322,6 +349,7 @@
 				342541772B9063C8002545BD /* Settings.swift in Sources */,
 				34C7B28D2B8E5D11007DA1EB /* SettingsView.swift in Sources */,
 				34C7B2912B8E62D9007DA1EB /* PlayGameView.swift in Sources */,
+				34215FF32BA8E93F0006315D /* HeaderBanner.swift in Sources */,
 				34C7B28F2B8E5E00007DA1EB /* LobbyView.swift in Sources */,
 				34017E4D2B97B45700B7FB72 /* PlayingCard.swift in Sources */,
 				34C7B2982B8E6A9F007DA1EB /* NetworkingController.swift in Sources */,
