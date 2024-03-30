@@ -28,6 +28,7 @@ struct TableView: View {
                 Circle()
                     .frame(width: 200)
                     .position(center)
+                    .foregroundStyle(Color("OutsetBackground"))
                 
                 // Surrounding Circles
                 ForEach(0..<appState.connectedPeers.count, id: \.self) { index in

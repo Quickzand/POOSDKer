@@ -13,6 +13,7 @@ struct HostGameView: View {
         VStack {
             NavigationLink("Start Lobby", destination: LobbyView())
         }
+        .withBackground()
     }
 }
 

@@ -10,22 +10,25 @@ import SwiftUI
 struct JoinGameView: View {
     @EnvironmentObject var appState : AppState
     var body: some View {
-        List {
-            ForEach(appState.discoveredPeers) {
-                discoveredHostModel in
-                
-                DiscoveredHostView(discoveredPeer: discoveredHostModel)
-                
+        VStack {
+            List {
+                ForEach(appState.discoveredPeers) {
+                    discoveredHostModel in
+                    
+                    DiscoveredHostView(discoveredPeer: discoveredHostModel)
+                    
+                }
             }
-        }
-        .onAppear {
-            appState.networkingController?.startBrowsing()
-        }
-        .onDisappear {
-            appState.networkingController?.stopBrowsing()
+            .onAppear {
+                appState.networkingController?.startBrowsing()
+            }
+            .onDisappear {
+                appState.networkingController?.stopBrowsing()
+            }
         }
         .navigationTitle("Join Lobby")
         .toolbarTitleDisplayMode(.inlineLarge)
+        .withBackground()
     }
 }
 
