@@ -26,8 +26,12 @@ struct LobbyView: View {
                 appState.networkingController?.broadcastCommandToPeers(broadcastCommandType: .startGame)
             }
         label: {
-            Text("Start Game")
+            Text("Join Game")
+                .foregroundStyle(.black)
+                .frame(width: UIScreen.main.bounds.width*0.4, height: 50, alignment: .center)
+                .background(RoundedRectangle(cornerRadius: 5).fill(Color(hex: "F5F2EA")))
         }.disabled(!self.appState.isHost)
+                
         }
         .onAppear {
             if let peerHost = peerHost {
