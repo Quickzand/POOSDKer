@@ -34,6 +34,8 @@ class AppState : ObservableObject {
     
     
     @Published var isInGame : Bool = false
+    @Published var showResultsView : Bool = false 
+    
     var hostPeer : Peer? = nil
     
     
@@ -41,12 +43,14 @@ class AppState : ObservableObject {
     var peerID: MCPeerID!
     
     @Published var networkingController : NetworkingController? = nil;
+    @Published var gameController : GameController? = nil;
     
     init() {
         settings = Settings()
         // Load settings from UserDefaults upon initialization
         settings = loadSettings()
         networkingController = NetworkingController(appState: self)
+        gameController = GameController(appState: self)
     }
     
     // Save settings to UserDefaults

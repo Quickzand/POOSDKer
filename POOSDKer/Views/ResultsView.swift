@@ -8,9 +8,16 @@
 import SwiftUI
 
 struct ResultsView: View {
+    @EnvironmentObject var appState : AppState
+    
     var body: some View {
         VStack {
             Text("Results")
+            Button {
+                appState.showResultsView = false
+            } label: {
+                Text("Finish")
+            }
         }
     }
 }

@@ -168,7 +168,7 @@ struct PlayingCard: View {
 }
 
 #Preview {
-    PlayingCard(suit: .Spades, face: .Queen)
+    PlayingCard(suit: .Clubs, face: .Queen)
 }
 
 

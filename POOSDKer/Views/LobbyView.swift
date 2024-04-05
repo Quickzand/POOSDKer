@@ -14,7 +14,7 @@ struct LobbyView: View {
     
     var body: some View {
         VStack {
- 
+            
             HeaderBanner(text:"Lobby", fullWidth: true)
             Spacer()
             VStack {
@@ -38,15 +38,21 @@ struct LobbyView: View {
             }
         }
         .onDisappear {
-            if(appState.isHost) {
-                appState.networkingController?.stopHosting();
-            }
-            else {
-                appState.networkingController?.disconnectFromHost()
+            if(!appState.isInGame) {
+                if(appState.isHost) {
+                    
+                    appState.networkingController?.stopHosting();
+                }
+                else {
+                    appState.networkingController?.disconnectFromHost()
+                }
             }
         }
         .navigationDestination(isPresented: $appState.isInGame) {
             PlayGameView()  .navigationBarBackButtonHidden(true)
+        }
+        .navigationDestination(isPresented: $appState.showResultsView) {
+            ResultsView()  .navigationBarBackButtonHidden(true)
         }
         .withBackground()
     }

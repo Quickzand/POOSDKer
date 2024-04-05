@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		34017E4D2B97B45700B7FB72 /* PlayingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34017E4C2B97B45700B7FB72 /* PlayingCard.swift */; };
+		3401808A2BBFC34400143984 /* GameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340180892BBFC34400143984 /* GameController.swift */; };
 		34215FF32BA8E93F0006315D /* HeaderBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34215FF22BA8E93F0006315D /* HeaderBanner.swift */; };
 		342541772B9063C8002545BD /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342541762B9063C8002545BD /* Settings.swift */; };
 		3433FF7F2B968B4800C90F8B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3433FF7E2B968B4800C90F8B /* Extensions.swift */; };
@@ -50,6 +51,7 @@
 
 /* Begin PBXFileReference section */
 		34017E4C2B97B45700B7FB72 /* PlayingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayingCard.swift; sourceTree = "<group>"; };
+		340180892BBFC34400143984 /* GameController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameController.swift; sourceTree = "<group>"; };
 		34215FF22BA8E93F0006315D /* HeaderBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderBanner.swift; sourceTree = "<group>"; };
 		342541752B8F1A8F002545BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		342541762B9063C8002545BD /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 			isa = PBXGroup;
 			children = (
 				34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */,
+				340180892BBFC34400143984 /* GameController.swift */,
 			);
 			path = Backend;
 			sourceTree = "<group>";
@@ -349,6 +352,7 @@
 				342541772B9063C8002545BD /* Settings.swift in Sources */,
 				34C7B28D2B8E5D11007DA1EB /* SettingsView.swift in Sources */,
 				34C7B2912B8E62D9007DA1EB /* PlayGameView.swift in Sources */,
+				3401808A2BBFC34400143984 /* GameController.swift in Sources */,
 				34215FF32BA8E93F0006315D /* HeaderBanner.swift in Sources */,
 				34C7B28F2B8E5E00007DA1EB /* LobbyView.swift in Sources */,
 				34017E4D2B97B45700B7FB72 /* PlayingCard.swift in Sources */,
