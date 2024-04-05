@@ -11,7 +11,6 @@ struct ContentView: View {
     @EnvironmentObject var appState : AppState
     var body: some View {
         ZStack {
-            
             NavigationStack {
                 VStack(alignment:.center) {
                     Spacer()

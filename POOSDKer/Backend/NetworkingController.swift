@@ -148,6 +148,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     enum BroadcastCommandType : String {
         case shareConnectedPeerList = "sharePeerList"
         case startGame = "startGame"
+        case endGame = "endGame"
     }
     
     
@@ -168,11 +169,15 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
             print("Starting game...")
             // Additional command-specific data can be added here if necessary
             
+        case .endGame:
+            print("Ending game...")
         default:
-            print("Unrecognized Command")
+            print("Unable to send unrecognized Command")
         }
         
         do {
+            print("Sending command to... ")
+            print(mcSession.connectedPeers)
             let data = try JSONSerialization.data(withJSONObject: broadcastData, options: [])
             try mcSession.send(data, toPeers: mcSession.connectedPeers, with: .reliable)
         } catch {
@@ -272,6 +277,12 @@ extension NetworkingController : MCSessionDelegate {
                     print("Start game command received.")
                     self.appState.isInGame = true
                     
+                    
+                case BroadcastCommandType.endGame.rawValue:
+                    print("END GAME COMMAND RECEIVED")
+                    self.appState.isInGame = false
+                    self.appState.showResultsView = true
+                    
                 default:
                     print("Unrecognized command received.")
                 }
@@ -295,6 +306,16 @@ extension NetworkingController : MCSessionDelegate {
         print("Here")
     }
     
+}
+
+
+// MARK: All broadcasting functions
+extension NetworkingController {
+    func broadcastEndGame() {
+        self.appState.isInGame = false
+        self.appState.showResultsView = true
+        self.broadcastCommandToPeers(broadcastCommandType: .endGame)
+    }
 }
 
 
