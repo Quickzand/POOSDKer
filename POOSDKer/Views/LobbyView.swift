@@ -22,8 +22,7 @@ struct LobbyView: View {
             }
             Spacer()
             Button{
-                appState.isInGame = true
-                appState.networkingController?.broadcastCommandToPeers(broadcastCommandType: .startGame)
+                appState.gameController?.startGame()
             }
         label: {
             Text("Start Game")

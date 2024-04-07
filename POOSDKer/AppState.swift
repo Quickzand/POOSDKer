@@ -33,6 +33,16 @@ class AppState : ObservableObject {
     }
     
     
+    @Published var triggerViewUpdate: Bool = false
+    
+    
+    var clientPeer : Peer {
+        connectedPeers.first(where: {peer in
+            return peer.id == UID
+        })!
+    }
+    
+    
     @Published var isInGame : Bool = false
     @Published var showResultsView : Bool = false 
     
@@ -69,6 +79,11 @@ class AppState : ObservableObject {
             return Settings() // Return default settings if none were saved
         }
     }
+    
+    
+    
+    // MARK: ALL PROPERTIES RELATED TO GAMEPLAY
+    @Published var activePeerIndex : Int = 0
 }
 
 

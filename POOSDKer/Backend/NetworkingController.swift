@@ -139,8 +139,25 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     
     
     struct BroadcastData: Decodable {
-        let commandType: String
+        let commandType: String?
         let peers: [Peer]?
+        let activePeerIndex: Int?
+
+        enum CodingKeys: String, CodingKey {
+            case commandType, peers, activePeerIndex
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            commandType = try container.decodeIfPresent(String.self, forKey: .commandType)
+            peers = try container.decodeIfPresent([Peer].self, forKey: .peers)
+            activePeerIndex = try container.decodeIfPresent(Int.self, forKey: .activePeerIndex)
+        }
+    }
+    
+    
+    struct GameState : Decodable {
+        let activePeerIndex : Int
     }
     
     
@@ -149,10 +166,14 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         case shareConnectedPeerList = "sharePeerList"
         case startGame = "startGame"
         case endGame = "endGame"
+        case updateGameState = "updateGameState"
     }
     
     
     func broadcastCommandToPeers(broadcastCommandType: BroadcastCommandType) {
+        if !appState.isHost {
+            return
+        }
         var broadcastData: [String: Any] = [:] // Change to [String: Any] to handle various data types
         broadcastData["commandType"] = broadcastCommandType.rawValue
         
@@ -168,7 +189,8 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         case .startGame:
             print("Starting game...")
             // Additional command-specific data can be added here if necessary
-            
+        case .updateGameState:
+            broadcastData["activePeerIndex"] = appState.activePeerIndex
         case .endGame:
             print("Ending game...")
         default:
@@ -230,8 +252,6 @@ extension NetworkingController : MCNearbyServiceBrowserDelegate {
 
 // All session control code
 extension NetworkingController : MCSessionDelegate {
-    
-    
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         DispatchQueue.main.async {
             switch state {
@@ -283,6 +303,23 @@ extension NetworkingController : MCSessionDelegate {
                     self.appState.isInGame = false
                     self.appState.showResultsView = true
                     
+                case BroadcastCommandType.updateGameState.rawValue:
+                    print("Updating game data...")
+                    if let activePeerIndex = decodedData.activePeerIndex {
+                        self.appState.activePeerIndex = activePeerIndex
+                        print(activePeerIndex)
+                    }
+                    
+                    
+//                MARK: ALL COMMANDS TO BE RECEIVED FROM HOST
+                case PeerToHostCommandType.check.rawValue:
+                    if !self.appState.isHost {
+                        print("Received host command when not host... ")
+                        return;
+                    }
+                    print("Receiving command to check...")
+                    self.appState.gameController?.check()
+                    
                 default:
                     print("Unrecognized command received.")
                 }
@@ -309,14 +346,58 @@ extension NetworkingController : MCSessionDelegate {
 }
 
 
-// MARK: All broadcasting functions
+// MARK: All broadcasting functions for host
 extension NetworkingController {
     func broadcastEndGame() {
         self.appState.isInGame = false
         self.appState.showResultsView = true
         self.broadcastCommandToPeers(broadcastCommandType: .endGame)
     }
+    
+    func broadcastUpdateGameState() {
+        self.broadcastCommandToPeers(broadcastCommandType: .updateGameState)
+    }
 }
+
+// MARK: All broadcasting functions for individuals
+extension NetworkingController {
+    enum PeerToHostCommandType : String {
+        case check = "check"
+    }
+    
+    
+    func sendCommandToHost(peerToHostCommandType: PeerToHostCommandType) {
+        guard let hostPeer = appState.hostPeer else {
+            print("No host found...")
+            return
+        }
+        
+        var sendingData: [String: Any] = [:]
+        sendingData["commandType"] = peerToHostCommandType.rawValue
+        
+        switch peerToHostCommandType {
+        case .check:
+            print("Sending check command to host...")
+        
+        default:
+            print("Unrecognized peer to host command")
+        }
+        
+        do {
+            let data = try JSONSerialization.data(withJSONObject: sendingData, options: [])
+            try mcSession.send(data, toPeers: [hostPeer.mcPeerID!], with: .reliable)
+        } catch {
+            print("Error encoding or sending command to host")
+        }
+    }
+    
+    
+    func sendCheckToHost() {
+        self.sendCommandToHost(peerToHostCommandType: .check)
+    }
+}
+
+
 
 
 struct Peer: Identifiable, Codable {
@@ -331,7 +412,8 @@ struct Peer: Identifiable, Codable {
         case displayName
         case playerColor
     }
-
+    
+    
     // Initialize with MCPeerID optionally
     init(id: String, displayName: String, playerColor: String , mcPeerID: MCPeerID? = nil) {
         self.id = id
