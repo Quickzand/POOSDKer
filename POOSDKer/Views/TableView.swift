@@ -50,19 +50,24 @@ struct PlayerIconView : View{
            let player = appState.connectedPeers[index]
 
            return AnyView(
-               ZStack {
-                   Circle()
-                       .frame(width: 60)
-                       .foregroundStyle(Color(hex: player.playerColor))
-                       .padding()
-                   
-                   if appState.hostPeer?.id == player.id {
-                       Image(systemName: "crown.fill")
-                           .foregroundStyle(Color.secondary)
-                   }
-                   Text(player.displayName)
-                       .foregroundStyle(appState.gameController?.activePeer.id == player.id ? .green : .white)
-               }
+            HStack {
+                ZStack {
+                    Circle()
+                        .frame(width: 60)
+                        .foregroundStyle(Color(hex: player.playerColor))
+                        .padding()
+                    
+                    if appState.hostPeer?.id == player.id {
+                        Image(systemName: "crown.fill")
+                            .foregroundStyle(Color.secondary)
+                    }
+                }
+                VStack {
+                    Text(player.displayName)
+                        .foregroundStyle(appState.gameController?.activePeer.id == player.id ? .green : .white)
+                    Text("$\(player.money)").foregroundStyle(.white)
+                }
+            }
            )
        }
        

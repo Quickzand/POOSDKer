@@ -29,6 +29,7 @@
 		34C7B2932B8E6317007DA1EB /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2922B8E6317007DA1EB /* ResultsView.swift */; };
 		34C7B2962B8E6A4C007DA1EB /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2952B8E6A4C007DA1EB /* AppState.swift */; };
 		34C7B2982B8E6A9F007DA1EB /* NetworkingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */; };
+		34DACA742BC3002C00F9A0EA /* Peer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DACA732BC3002C00F9A0EA /* Peer.swift */; };
 		34F998312B9346590077B62F /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F998302B9346590077B62F /* TableView.swift */; };
 /* End PBXBuildFile section */
 
@@ -76,6 +77,7 @@
 		34C7B2922B8E6317007DA1EB /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
 		34C7B2952B8E6A4C007DA1EB /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingController.swift; sourceTree = "<group>"; };
+		34DACA732BC3002C00F9A0EA /* Peer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peer.swift; sourceTree = "<group>"; };
 		34F998302B9346590077B62F /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -204,6 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */,
+				34DACA732BC3002C00F9A0EA /* Peer.swift */,
 				340180892BBFC34400143984 /* GameController.swift */,
 			);
 			path = Backend;
@@ -349,6 +352,7 @@
 				34C7B2892B8E5ADD007DA1EB /* HostGameView.swift in Sources */,
 				34C7B28B2B8E5CE6007DA1EB /* JoinGameView.swift in Sources */,
 				3433FF7F2B968B4800C90F8B /* Extensions.swift in Sources */,
+				34DACA742BC3002C00F9A0EA /* Peer.swift in Sources */,
 				342541772B9063C8002545BD /* Settings.swift in Sources */,
 				34C7B28D2B8E5D11007DA1EB /* SettingsView.swift in Sources */,
 				34C7B2912B8E62D9007DA1EB /* PlayGameView.swift in Sources */,

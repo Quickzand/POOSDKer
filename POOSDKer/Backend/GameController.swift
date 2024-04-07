@@ -29,8 +29,14 @@ class GameController {
     }
     
     var activePeer : Peer {
-        guard appState.connectedPeers.indices.contains(activePeerIndex) else { return appState.connectedPeers[0] }
-        return appState.connectedPeers[activePeerIndex]
+        get {
+            guard appState.connectedPeers.indices.contains(activePeerIndex) else { return appState.connectedPeers[0] }
+            return appState.connectedPeers[activePeerIndex]
+        }
+        
+        set {
+            appState.connectedPeers[activePeerIndex] = newValue
+        }
        }
     
     
@@ -49,6 +55,29 @@ class GameController {
         
         appState.isInGame = true
         appState.networkingController?.broadcastCommandToPeers(broadcastCommandType: .startGame)
+    }
+    
+    func bet() {
+        if !self.appState.isHost {
+            self.appState.networkingController?.sendBetToHost()
+            return;
+        }
+        
+        activePeer.money += 20
+        appState.networkingController?.broadcastUpdatePeerMoney()
+        
+        print("\(activePeer.displayName) \t Is Checking...")
+        activePeerIndex += 1;
+        
+        
+        if activePeerIndex >= appState.connectedPeers.count {
+            activePeerIndex = 0;
+        }
+        
+        appState.triggerViewUpdate.toggle()
+        
+        
+        networkingController.broadcastUpdateGameState()
     }
     
     
