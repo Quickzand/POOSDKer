@@ -25,7 +25,7 @@ struct PlayGameView: View {
             VStack {
                 HStack {
                     Button {
-                        appState.gameController?.check()
+                        appState.gameController?.bet()
                     } label: {
                         Text("Bet")
                     }
