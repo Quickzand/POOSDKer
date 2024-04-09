@@ -48,22 +48,31 @@ class GameController {
         
         
     //  Go through all peers and ensure their game values are set to inital
-        for i in 0...appState.connectedPeers.count - 1 {
-//            appState.connectedPeers[i].money = 200
-        }
+
         
         
         appState.isInGame = true
         appState.networkingController?.broadcastCommandToPeers(broadcastCommandType: .startGame)
+        for i in 0...appState.connectedPeers.count - 1 {
+            appState.activePeerIndex = i
+            appState.connectedPeers[i].money = 200
+            appState.networkingController?.broadcastUpdatePeerMoney()
+        }
+        
+        
+        appState.activePeerIndex = 0
     }
     
-    func bet() {
+    func bet(value : Int) {
         if !self.appState.isHost {
+            activePeer.bet = value
             self.appState.networkingController?.sendBetToHost()
             return;
         }
         
-        activePeer.money += 20
+        activePeer.bet += value
+        activePeer.money -= value
+        appState.networkingController?.broadcastUpdatePeerBet()
         appState.networkingController?.broadcastUpdatePeerMoney()
         
         print("\(activePeer.displayName) \t Is Checking...")
@@ -106,11 +115,4 @@ class GameController {
         self.appState.networkingController?.broadcastEndGame()
     }
 }
-
-
-
-class Player {
-    
-}
-
 
