@@ -13,6 +13,9 @@ struct PlayGameView: View {
     func isActivePeer() -> Bool {
         return appState.gameController?.activePeer.id ==  appState.UID
     }
+    
+    @State private var betInput = ""
+    @State private var showBetSheet = false
         
         
     var body: some View {
@@ -25,7 +28,8 @@ struct PlayGameView: View {
             VStack {
                 HStack {
                     Button {
-                        appState.gameController?.bet()
+                        showBetSheet = true
+//                        appState.gameController?.bet()
                     } label: {
                         Text("Bet")
                     }
@@ -42,8 +46,6 @@ struct PlayGameView: View {
                     }
                 }.disabled(!isActivePeer())
                 
-                
-//                Text(String(appState.clientPeer.money))
             }
             .padding()
             
@@ -57,6 +59,60 @@ struct PlayGameView: View {
             }
         }
         .withBackground()
+        .sheet(isPresented: $showBetSheet) {
+            NumericInputView(numericInput: $betInput)
+        }
+    }
+}
+
+struct NumericInputView: View {
+    @Binding var numericInput: String
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var appState : AppState
+    @FocusState private var isInputFocused: Bool
+    
+    
+    var body: some View {
+        VStack {
+            TextField("Enter number", text: $numericInput)
+                           .keyboardType(.numberPad)
+                           .focused($isInputFocused)
+                           .padding()
+                       
+            
+            Button("Cancel") {
+                presentationMode.wrappedValue.dismiss()
+            }
+            Button("Done") {
+                if(isBetValid()) {
+                    appState.gameController?.bet(value: Int(numericInput) ?? 0)
+                    presentationMode.wrappedValue.dismiss()
+                }
+                else {
+                    print("Invalid bet...")
+                }
+            }
+        }
+        .padding()
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // Adjust the delay as needed
+                isInputFocused = true
+            }
+        }
+    }
+    
+    
+    func isBetValid() -> Bool{
+        if let bet = Int(numericInput) {
+            if bet == 0 || bet < appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet || bet > appState.connectedPeers[appState.activePeerIndex].money {
+                return false
+            }
+            return true
+        }
+        else {
+            return false
+        }
+      
     }
 }
 
