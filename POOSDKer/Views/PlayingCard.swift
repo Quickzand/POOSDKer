@@ -7,17 +7,7 @@
 
 import SwiftUI
 
-
-
-
-
-
-
-
-
 struct PlayingCard: View {
-    
-
     
     
     var suit : Suit

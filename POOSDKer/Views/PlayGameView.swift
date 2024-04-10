@@ -27,6 +27,18 @@ struct PlayGameView: View {
             Spacer()
             VStack {
                 HStack {
+                    if appState.clientPeer.cards.count >= 2 {
+                                  let firstCard = appState.clientPeer.cards[0]
+                                  let secondCard = appState.clientPeer.cards[1]
+
+                        PlayingCard(suit: firstCard.suit, face: firstCard.face)
+                        PlayingCard(suit: secondCard.suit, face: secondCard.face)
+                              } else {
+                                  Text("Not enough cards")
+                              }
+                    
+                }
+                HStack {
                     Button {
                         showBetSheet = true
 //                        appState.gameController?.bet()

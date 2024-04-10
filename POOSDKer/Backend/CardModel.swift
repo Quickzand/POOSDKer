@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct CardModel {
+struct CardModel : Codable {
     var suit : Suit
     var face : Face
     
@@ -19,17 +19,21 @@ struct CardModel {
     static func == (lhs: CardModel, rhs: CardModel) -> Bool {
         return lhs.face.rawValue == rhs.face.rawValue
     }
+    
+
+}
+func cardToDictionary(card: CardModel) -> [String: Any] {
+    return ["suit": card.suit.rawValue, "face": card.face.rawValue]
 }
 
-
-enum Suit : String {
+enum Suit : String, Codable {
     case Hearts = "suit.heart.fill"
     case Spades = "suit.spade.fill"
     case Diamonds = "suit.diamond.fill"
     case Clubs = "suit.club.fill"
 }
 
-enum Face : String {
+enum Face : String, Codable {
     case Two = "2"
     case Three = "3"
     case Four = "4"
