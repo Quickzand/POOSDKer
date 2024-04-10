@@ -40,7 +40,7 @@ struct PlayGameView: View {
                         Text("Check")
                     }
                     Button {
-                        appState.gameController?.check()
+                        appState.gameController?.fold()
                     } label: {
                         Text("Fold")
                     }

@@ -62,15 +62,16 @@ struct PlayerIconView : View{
                             .foregroundStyle(Color.secondary)
                     }
                 }
-                VStack {
+                VStack (alignment: .leading) {
                     Text(player.displayName)
                         .foregroundStyle(appState.gameController?.activePeer.id == player.id ? .green : .white)
-                    VStack {
+                    VStack(alignment: .leading) {
                         Text("Money: $\(player.money)").foregroundStyle(.white)
                         Text("Bet: $\(player.bet)").foregroundStyle(.white)
                     }.opacity(!appState.isInGame ? 0 : 1)
                 }
             }
+                .background(player.isFolded ? .black : .brown)
            )
        }
        

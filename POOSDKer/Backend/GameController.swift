@@ -110,6 +110,31 @@ class GameController {
         networkingController.broadcastUpdateGameState()
     }
     
+    func fold() {
+        if !self.appState.isHost {
+            self.appState.networkingController?.sendFoldToHost()
+            return;
+        }
+        
+        print("\(activePeer.displayName) \t Is Folding...")
+        activePeer.isFolded = true
+        
+        appState.networkingController?.broadcastUpdatePlayerFoldState()
+        
+        activePeerIndex += 1;
+        
+        
+        if activePeerIndex >= appState.connectedPeers.count {
+            activePeerIndex = 0;
+        }
+        
+        appState.triggerViewUpdate.toggle()
+        networkingController.broadcastUpdateGameState()
+        
+        
+        
+    }
+    
     func endGame() {
         self.activePeerIndex = 0
         self.appState.networkingController?.broadcastEndGame()

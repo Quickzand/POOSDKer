@@ -16,6 +16,8 @@ struct Peer: Identifiable, Codable {
     var money : Int
     var bet : Int
     
+    var isFolded : Bool
+    
     
     var mcPeerID: MCPeerID?
 
@@ -26,6 +28,7 @@ struct Peer: Identifiable, Codable {
         case playerColor
         case money
         case bet
+        case isFolded
     }
     
     
@@ -37,6 +40,7 @@ struct Peer: Identifiable, Codable {
         self.mcPeerID = mcPeerID
         self.money = 0
         self.bet = 0 
+        self.isFolded = false
     }
 }
 
