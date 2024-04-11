@@ -21,13 +21,20 @@ struct LobbyView: View {
                 TableView()
             }
             Spacer()
-            Button{
-                appState.gameController?.startGame()
+            
+            if self.appState.isHost {
+                Button{
+                   appState.gameController?.startGame()
+                }
+            label: {
+                Text("Start Game")
+                    .foregroundStyle(.black)
+                    .frame(width: UIScreen.main.bounds.width*0.4, height: 50, alignment: .center)
+                    .background(RoundedRectangle(cornerRadius: 5).fill(Color(hex: "F5F2EA")))
             }
-        label: {
-            Text("Start Game")
-        }.disabled(!self.appState.isHost)
+            }
         }
+        
         .onAppear {
             if let peerHost = peerHost {
                 appState.networkingController?.requestToJoinHost(hostPeer: peerHost)

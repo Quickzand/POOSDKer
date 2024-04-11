@@ -11,6 +11,8 @@ struct JoinGameView: View {
     @EnvironmentObject var appState : AppState
     var body: some View {
         VStack {
+            
+            HeaderBanner(text: "Open Games", fullWidth: true)
             List {
                 ForEach(appState.discoveredPeers) {
                     discoveredHostModel in
@@ -18,7 +20,18 @@ struct JoinGameView: View {
                     DiscoveredHostView(discoveredPeer: discoveredHostModel)
                     
                 }
+                
             }
+            .background(Color(hex: "F5F2EA"))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                .stroke(Color(hex: "#8AA792"), lineWidth: 4)
+                )
+            .padding(.all, 20)
+            .scrollContentBackground(.hidden)
+            
+            
             .onAppear {
                 appState.networkingController?.startBrowsing()
             }
@@ -26,7 +39,6 @@ struct JoinGameView: View {
                 appState.networkingController?.stopBrowsing()
             }
         }
-        .navigationTitle("Join Lobby")
         .toolbarTitleDisplayMode(.inlineLarge)
         .withBackground()
     }
@@ -39,6 +51,7 @@ struct DiscoveredHostView : View {
     
     var body : some View {
         NavigationLink(discoveredPeer.displayName, destination: LobbyView(peerHost: discoveredPeer))
+        
     }
 }
 
