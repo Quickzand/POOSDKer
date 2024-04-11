@@ -7,38 +7,7 @@
 
 import SwiftUI
 
-
-enum Suit : String {
-    case Hearts = "suit.heart.fill"
-    case Spades = "suit.spade.fill"
-    case Diamonds = "suit.diamond.fill"
-    case Clubs = "suit.club.fill"
-}
-
-enum Face : String {
-    case Two = "2"
-    case Three = "3"
-    case Four = "4"
-    case Five = "5"
-    case Six = "6"
-    case Seven = "7"
-    case Eight = "8"
-    case Nine = "9"
-    case Ten = "10"
-    case Jack = "J"
-    case Queen = "Q"
-    case King = "K"
-    case Ace = "A"
-}
-
-
-
-
-
-
 struct PlayingCard: View {
-    
-
     
     
     var suit : Suit

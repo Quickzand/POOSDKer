@@ -146,9 +146,10 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         let money : Int?
         let bet : Int?
         let isFolded : Bool?
+        let cards : [CardModel]?
 
         enum CodingKeys: String, CodingKey {
-            case commandType, peers, activePeerIndex, peerID, money, bet, isFolded
+            case commandType, peers, activePeerIndex, peerID, money, bet, isFolded, cards
         }
 
         init(from decoder: Decoder) throws {
@@ -160,6 +161,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
             money = try container.decodeIfPresent(Int.self, forKey: .money)
             bet =  try container.decodeIfPresent(Int.self, forKey: .bet)
             isFolded = try container.decodeIfPresent(Bool.self, forKey: .isFolded)
+            cards = try container.decodeIfPresent([CardModel].self, forKey: .cards)
         }
     }
     
@@ -174,6 +176,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         case updatePlayerMoney = "updatePlayerMoney"
         case updatePlayerBet = "updatePlayerBet"
         case updatePlayerFoldState = "updatePlayerFoldState"
+        case updatePlayerCards = "updatePlayerCards"
     }
     
     
@@ -181,14 +184,14 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         if !appState.isHost {
             return
         }
-        var broadcastData: [String: Any] = [:] // Change to [String: Any] to handle various data types
+        var broadcastData: [String: Any] = [:]
         broadcastData["commandType"] = broadcastCommandType.rawValue
         
         switch broadcastCommandType {
         case .shareConnectedPeerList:
             // Prepare the list of peers to be shared
             let peersToSend = appState.connectedPeers.map {
-                ["id": $0.id, "displayName": $0.displayName, "playerColor": $0.playerColor, "money": $0.money, "bet": $0.bet, "isFolded": $0.isFolded]
+                ["id": $0.id, "displayName": $0.displayName, "playerColor": $0.playerColor, "money": $0.money, "bet": $0.bet, "isFolded": $0.isFolded, "cards": $0.cards]
             }
             broadcastData["peers"] = peersToSend
             print("Sharing peer list...")
@@ -207,6 +210,10 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         case .updatePlayerFoldState:
             broadcastData["peerID"] = appState.connectedPeers[appState.activePeerIndex].id
             broadcastData["isFolded"] = appState.connectedPeers[appState.activePeerIndex].isFolded
+        case .updatePlayerCards:
+            broadcastData["peerID"] = appState.connectedPeers[appState.activePeerIndex].id
+            let cardsArray = appState.connectedPeers[appState.activePeerIndex].cards.map { cardToDictionary(card: $0) }
+            broadcastData["cards"] = cardsArray
         case .endGame:
             print("Ending game...")
         default:
@@ -366,6 +373,19 @@ extension NetworkingController : MCSessionDelegate {
                         
                     }
                     
+                case BroadcastCommandType.updatePlayerCards.rawValue:
+                    print("Updating player cards...")
+                    print(decodedData)
+                    if let peerID = decodedData.peerID, let cards = decodedData.cards {
+                        if let index = self.appState.connectedPeers.firstIndex(where: { $0.id == peerID }) {
+                            self.appState.connectedPeers[index].cards = cards
+                            self.appState.triggerViewUpdate.toggle()
+                        } else {
+                            print("Peer with ID \(peerID) not found.")
+                        }
+                        
+                    }
+                    
                     
 //                MARK: ALL COMMANDS TO BE RECEIVED FROM HOST
                 case PeerToHostCommandType.check.rawValue:
@@ -450,6 +470,10 @@ extension NetworkingController {
     
     func broadcastUpdatePlayerFoldState() {
         self.broadcastCommandToPeers(broadcastCommandType: .updatePlayerFoldState)
+    }
+    
+    func broadcastUpdatePlayerCards() {
+        self.broadcastCommandToPeers(broadcastCommandType: .updatePlayerCards)
     }
 }
 
