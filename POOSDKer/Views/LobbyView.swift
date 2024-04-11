@@ -24,15 +24,14 @@ struct LobbyView: View {
             
             if self.appState.isHost {
                 Button{
-                    appState.isInGame = true
-                    appState.networkingController?.broadcastCommandToPeers(broadcastCommandType: .startGame)
+                   appState.gameController?.startGame()
                 }
             label: {
                 Text("Start Game")
                     .foregroundStyle(.black)
                     .frame(width: UIScreen.main.bounds.width*0.4, height: 50, alignment: .center)
                     .background(RoundedRectangle(cornerRadius: 5).fill(Color(hex: "F5F2EA")))
-            }.disabled(!self.appState.isHost)
+            }
             }
         }
         
@@ -45,15 +44,21 @@ struct LobbyView: View {
             }
         }
         .onDisappear {
-            if(appState.isHost) {
-                appState.networkingController?.stopHosting();
-            }
-            else {
-                appState.networkingController?.disconnectFromHost()
+            if(!appState.isInGame) {
+                if(appState.isHost) {
+                    
+                    appState.networkingController?.stopHosting();
+                }
+                else {
+                    appState.networkingController?.disconnectFromHost()
+                }
             }
         }
         .navigationDestination(isPresented: $appState.isInGame) {
             PlayGameView()  .navigationBarBackButtonHidden(true)
+        }
+        .navigationDestination(isPresented: $appState.showResultsView) {
+            ResultsView()  .navigationBarBackButtonHidden(true)
         }
         .withBackground()
     }

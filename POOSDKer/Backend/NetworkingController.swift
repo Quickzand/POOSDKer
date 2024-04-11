@@ -139,27 +139,59 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     
     
     struct BroadcastData: Decodable {
-        let commandType: String
+        let commandType: String?
         let peers: [Peer]?
+        let activePeerIndex: Int?
+        let peerID : String?
+        let money : Int?
+        let bet : Int?
+        let isFolded : Bool?
+        let cards : [CardModel]?
+
+        enum CodingKeys: String, CodingKey {
+            case commandType, peers, activePeerIndex, peerID, money, bet, isFolded, cards
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            commandType = try container.decodeIfPresent(String.self, forKey: .commandType)
+            peers = try container.decodeIfPresent([Peer].self, forKey: .peers)
+            activePeerIndex = try container.decodeIfPresent(Int.self, forKey: .activePeerIndex)
+            peerID = try container.decodeIfPresent(String.self, forKey: .peerID)
+            money = try container.decodeIfPresent(Int.self, forKey: .money)
+            bet =  try container.decodeIfPresent(Int.self, forKey: .bet)
+            isFolded = try container.decodeIfPresent(Bool.self, forKey: .isFolded)
+            cards = try container.decodeIfPresent([CardModel].self, forKey: .cards)
+        }
     }
+    
     
     
 //    MARK: All types of commands that can be sent
     enum BroadcastCommandType : String {
         case shareConnectedPeerList = "sharePeerList"
         case startGame = "startGame"
+        case endGame = "endGame"
+        case updateGameState = "updateGameState"
+        case updatePlayerMoney = "updatePlayerMoney"
+        case updatePlayerBet = "updatePlayerBet"
+        case updatePlayerFoldState = "updatePlayerFoldState"
+        case updatePlayerCards = "updatePlayerCards"
     }
     
     
     func broadcastCommandToPeers(broadcastCommandType: BroadcastCommandType) {
-        var broadcastData: [String: Any] = [:] // Change to [String: Any] to handle various data types
+        if !appState.isHost {
+            return
+        }
+        var broadcastData: [String: Any] = [:]
         broadcastData["commandType"] = broadcastCommandType.rawValue
         
         switch broadcastCommandType {
         case .shareConnectedPeerList:
             // Prepare the list of peers to be shared
             let peersToSend = appState.connectedPeers.map {
-                ["id": $0.id, "displayName": $0.displayName, "playerColor": $0.playerColor]
+                ["id": $0.id, "displayName": $0.displayName, "playerColor": $0.playerColor, "money": $0.money, "bet": $0.bet, "isFolded": $0.isFolded, "cards": $0.cards]
             }
             broadcastData["peers"] = peersToSend
             print("Sharing peer list...")
@@ -167,12 +199,30 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         case .startGame:
             print("Starting game...")
             // Additional command-specific data can be added here if necessary
-            
+        case .updateGameState:
+            broadcastData["activePeerIndex"] = appState.activePeerIndex
+        case .updatePlayerMoney:
+            broadcastData["money"] = appState.connectedPeers[appState.activePeerIndex].money
+            broadcastData["peerID"] = appState.connectedPeers[appState.activePeerIndex].id
+        case .updatePlayerBet:
+            broadcastData["bet"] = appState.connectedPeers[appState.activePeerIndex].bet
+            broadcastData["peerID"] = appState.connectedPeers[appState.activePeerIndex].id
+        case .updatePlayerFoldState:
+            broadcastData["peerID"] = appState.connectedPeers[appState.activePeerIndex].id
+            broadcastData["isFolded"] = appState.connectedPeers[appState.activePeerIndex].isFolded
+        case .updatePlayerCards:
+            broadcastData["peerID"] = appState.connectedPeers[appState.activePeerIndex].id
+            let cardsArray = appState.connectedPeers[appState.activePeerIndex].cards.map { cardToDictionary(card: $0) }
+            broadcastData["cards"] = cardsArray
+        case .endGame:
+            print("Ending game...")
         default:
-            print("Unrecognized Command")
+            print("Unable to send unrecognized Command")
         }
         
         do {
+            print("Sending command to... ")
+            print(mcSession.connectedPeers)
             let data = try JSONSerialization.data(withJSONObject: broadcastData, options: [])
             try mcSession.send(data, toPeers: mcSession.connectedPeers, with: .reliable)
         } catch {
@@ -225,8 +275,6 @@ extension NetworkingController : MCNearbyServiceBrowserDelegate {
 
 // All session control code
 extension NetworkingController : MCSessionDelegate {
-    
-    
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         DispatchQueue.main.async {
             switch state {
@@ -272,6 +320,108 @@ extension NetworkingController : MCSessionDelegate {
                     print("Start game command received.")
                     self.appState.isInGame = true
                     
+                    
+                case BroadcastCommandType.endGame.rawValue:
+                    print("END GAME COMMAND RECEIVED")
+                    self.appState.isInGame = false
+                    self.appState.showResultsView = true
+                    
+                case BroadcastCommandType.updateGameState.rawValue:
+                    print("Updating game data...")
+                    if let activePeerIndex = decodedData.activePeerIndex {
+                        self.appState.activePeerIndex = activePeerIndex
+                        print(activePeerIndex)
+                    }
+                
+                case BroadcastCommandType.updatePlayerMoney.rawValue:
+                    print("Updating player money...")
+                    print(decodedData)
+                    if let peerID = decodedData.peerID, let money = decodedData.money {
+                        if let index = self.appState.connectedPeers.firstIndex(where: { $0.id == peerID }) {
+                            self.appState.connectedPeers[index].money = money
+                            self.appState.triggerViewUpdate.toggle()
+                        } else {
+                            print("Peer with ID \(peerID) not found.")
+                        }
+                        
+                    }
+                    
+                case BroadcastCommandType.updatePlayerBet.rawValue:
+                    print("Updating player bet...")
+                    print(decodedData)
+                    if let peerID = decodedData.peerID, let bet = decodedData.bet {
+                        if let index = self.appState.connectedPeers.firstIndex(where: { $0.id == peerID }) {
+                            self.appState.connectedPeers[index].bet = bet
+                            self.appState.triggerViewUpdate.toggle()
+                        } else {
+                            print("Peer with ID \(peerID) not found.")
+                        }
+                        
+                    }
+                    
+                case BroadcastCommandType.updatePlayerFoldState.rawValue:
+                    print("Updating player fold state...")
+                    print(decodedData)
+                    if let peerID = decodedData.peerID, let isFolded = decodedData.isFolded {
+                        if let index = self.appState.connectedPeers.firstIndex(where: { $0.id == peerID }) {
+                            print("HERE")
+                            self.appState.connectedPeers[index].isFolded = isFolded
+                            self.appState.triggerViewUpdate.toggle()
+                        } else {
+                            print("Peer with ID \(peerID) not found.")
+                        }
+                        
+                    }
+                    
+                case BroadcastCommandType.updatePlayerCards.rawValue:
+                    print("Updating player cards...")
+                    print(decodedData)
+                    if let peerID = decodedData.peerID, let cards = decodedData.cards {
+                        if let index = self.appState.connectedPeers.firstIndex(where: { $0.id == peerID }) {
+                            self.appState.connectedPeers[index].cards = cards
+                            self.appState.triggerViewUpdate.toggle()
+                        } else {
+                            print("Peer with ID \(peerID) not found.")
+                        }
+                        
+                    }
+                    
+                    
+//                MARK: ALL COMMANDS TO BE RECEIVED FROM HOST
+                case PeerToHostCommandType.check.rawValue:
+                    if !self.appState.isHost {
+                        print("Received host command when not host... ")
+                        return;
+                    }
+                    print("Receiving command to check...")
+                    self.appState.gameController?.check()
+                
+                case PeerToHostCommandType.bet.rawValue:
+                    if !self.appState.isHost {
+                        print("Received host command when not host... ")
+                        return;
+                    }
+                    print("Receiving command to check...")
+                    if let bet = decodedData.bet {
+                            self.appState.gameController?.bet(value: bet)
+                            print("BETTING \(bet)")
+                            self.appState.triggerViewUpdate.toggle()
+                    }
+                    else {
+                        print("Couldnt find bet in encodedData...")
+                        print(decodedData)
+                    }
+                    
+                case PeerToHostCommandType.fold.rawValue:
+                    if !self.appState.isHost {
+                        print("Received host command when not host... ")
+                        return;
+                    }
+                    print("Receiving command to check...")
+                            self.appState.gameController?.fold()
+                            self.appState.triggerViewUpdate.toggle()
+                    
+                    
                 default:
                     print("Unrecognized command received.")
                 }
@@ -298,24 +448,92 @@ extension NetworkingController : MCSessionDelegate {
 }
 
 
-struct Peer: Identifiable, Codable {
-    var id: String // Use a unique identifier that you can match with MCPeerID.displayName
-    var displayName: String
-    var playerColor : String
-    var mcPeerID: MCPeerID?
-
-    // Since MCPeerID is not Codable, we exclude it from the encoding process
-    enum CodingKeys: String, CodingKey {
-        case id
-        case displayName
-        case playerColor
+// MARK: All broadcasting functions for host
+extension NetworkingController {
+    func broadcastEndGame() {
+        self.appState.isInGame = false
+        self.appState.showResultsView = true
+        self.broadcastCommandToPeers(broadcastCommandType: .endGame)
+    }
+    
+    func broadcastUpdateGameState() {
+        self.broadcastCommandToPeers(broadcastCommandType: .updateGameState)
     }
 
-    // Initialize with MCPeerID optionally
-    init(id: String, displayName: String, playerColor: String , mcPeerID: MCPeerID? = nil) {
-        self.id = id
-        self.displayName = displayName
-        self.playerColor = playerColor
-        self.mcPeerID = mcPeerID
+    func broadcastUpdatePeerMoney() {
+        self.broadcastCommandToPeers(broadcastCommandType: .updatePlayerMoney)
+    }
+    
+    func broadcastUpdatePeerBet() {
+        self.broadcastCommandToPeers(broadcastCommandType: .updatePlayerBet)
+    }
+    
+    func broadcastUpdatePlayerFoldState() {
+        self.broadcastCommandToPeers(broadcastCommandType: .updatePlayerFoldState)
+    }
+    
+    func broadcastUpdatePlayerCards() {
+        self.broadcastCommandToPeers(broadcastCommandType: .updatePlayerCards)
     }
 }
+
+// MARK: All broadcasting functions for individuals
+extension NetworkingController {
+    enum PeerToHostCommandType : String {
+        case check = "check"
+        case bet = "bet"
+        case fold = "fold"
+    }
+    
+    
+    func sendCommandToHost(peerToHostCommandType: PeerToHostCommandType) {
+        guard let hostPeer = appState.hostPeer else {
+            print("No host found...")
+            return
+        }
+        
+        var sendingData: [String: Any] = [:]
+        sendingData["commandType"] = peerToHostCommandType.rawValue
+        
+        switch peerToHostCommandType {
+        case .check:
+            print("Sending check command to host...")
+        
+        case .bet:
+            print("UPDATING THE MONIES")
+            sendingData["bet"] = self.appState.connectedPeers[self.appState.activePeerIndex].bet
+        
+        case .fold:
+            print("Sending fold command to host...")
+            
+            
+        default:
+            print("Unrecognized peer to host command")
+        }
+        
+        do {
+            let data = try JSONSerialization.data(withJSONObject: sendingData, options: [])
+            try mcSession.send(data, toPeers: [hostPeer.mcPeerID!], with: .reliable)
+        } catch {
+            print("Error encoding or sending command to host")
+        }
+    }
+    
+    
+    func sendCheckToHost() {
+        self.sendCommandToHost(peerToHostCommandType: .check)
+    }
+    
+    func sendBetToHost() {
+        self.sendCommandToHost(peerToHostCommandType: .bet)
+    }
+    
+    func sendFoldToHost() {
+        self.sendCommandToHost(peerToHostCommandType: .fold)
+    }
+}
+
+
+
+
+

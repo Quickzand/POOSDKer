@@ -33,7 +33,19 @@ class AppState : ObservableObject {
     }
     
     
+    @Published var triggerViewUpdate: Bool = false
+    
+    
+    var clientPeer : Peer {
+        connectedPeers.first(where: {peer in
+            return peer.id == UID
+        })!
+    }
+    
+    
     @Published var isInGame : Bool = false
+    @Published var showResultsView : Bool = false 
+    
     var hostPeer : Peer? = nil
     
     
@@ -41,12 +53,14 @@ class AppState : ObservableObject {
     var peerID: MCPeerID!
     
     @Published var networkingController : NetworkingController? = nil;
+    @Published var gameController : GameController? = nil;
     
     init() {
         settings = Settings()
         // Load settings from UserDefaults upon initialization
         settings = loadSettings()
         networkingController = NetworkingController(appState: self)
+        gameController = GameController(appState: self)
     }
     
     // Save settings to UserDefaults
@@ -65,6 +79,22 @@ class AppState : ObservableObject {
             return Settings() // Return default settings if none were saved
         }
     }
+    
+    var currentHighestBet : Int {
+        var currentHighest = 0
+        connectedPeers.forEach {peer in
+            if peer.bet > currentHighest {
+                currentHighest = peer.bet
+            }
+        }
+        
+        return currentHighest
+    }
+    
+    
+    
+    // MARK: ALL PROPERTIES RELATED TO GAMEPLAY
+    @Published var activePeerIndex : Int = 0
 }
 
 
