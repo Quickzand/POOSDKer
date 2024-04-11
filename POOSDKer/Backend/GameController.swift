@@ -66,6 +66,9 @@ class GameController {
         self.appState.communityCards = [cardDeck.draw(),cardDeck.draw(),cardDeck.draw(), cardDeck.draw(),cardDeck.draw()]
         
         
+        self.appState.networkingController?.broadcastUpdateCommunityCards()
+        
+        
         appState.activePeerIndex = 0
     }
     
@@ -76,7 +79,7 @@ class GameController {
         for i in 0...appState.connectedPeers.count - 1 {
             appState.activePeerIndex = i
             appState.connectedPeers[i].cards = [cardDeck.draw(), cardDeck.draw()]
-            print("Giving our the cards \(appState.connectedPeers[i].cards)")
+            print("Giving out the cards \(appState.connectedPeers[i].cards)")
             appState.networkingController?.broadcastUpdatePlayerCards()
             
         }

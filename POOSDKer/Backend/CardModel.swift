@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct CardModel : Codable {
+struct CardModel : Codable, Hashable {
     var suit : Suit
     var face : Face
     
