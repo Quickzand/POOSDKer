@@ -8,9 +8,10 @@
 import Foundation
 
 
-struct CardModel : Codable {
+struct CardModel : Codable, Hashable {
     var suit : Suit
     var face : Face
+    
     
     static func < (lhs: CardModel, rhs: CardModel) -> Bool {
         return lhs.face.rawValue < rhs.face.rawValue

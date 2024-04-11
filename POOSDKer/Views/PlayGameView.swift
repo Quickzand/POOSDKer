@@ -22,9 +22,11 @@ struct PlayGameView: View {
         VStack {
             Text("Play Game")
             HStack {
-//                ForEach(appState.communityCards) {card in
-//                    
-//                }
+                ForEach(appState.communityCards, id: \.self) {cardModel in
+                    PlayingCard(suit: cardModel.suit, face: cardModel.face).font(.system(size: 16))
+                        .frame(width:50)
+                    
+                }
             }
             Spacer()
             TableView()

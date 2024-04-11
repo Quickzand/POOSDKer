@@ -82,7 +82,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         serviceAdvertiser.startAdvertisingPeer()
         
         
-     
+        
     }
     
     func stopHosting() {
@@ -147,11 +147,11 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         let bet : Int?
         let isFolded : Bool?
         let cards : [CardModel]?
-
+        
         enum CodingKeys: String, CodingKey {
             case commandType, peers, activePeerIndex, peerID, money, bet, isFolded, cards
         }
-
+        
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             commandType = try container.decodeIfPresent(String.self, forKey: .commandType)
@@ -167,7 +167,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     
     
     
-//    MARK: All types of commands that can be sent
+    //    MARK: All types of commands that can be sent
     enum BroadcastCommandType : String {
         case shareConnectedPeerList = "sharePeerList"
         case startGame = "startGame"
@@ -177,6 +177,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         case updatePlayerBet = "updatePlayerBet"
         case updatePlayerFoldState = "updatePlayerFoldState"
         case updatePlayerCards = "updatePlayerCards"
+        case updateCommunityCards = "updateCommunityCards"
     }
     
     
@@ -214,6 +215,9 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
             broadcastData["peerID"] = appState.connectedPeers[appState.activePeerIndex].id
             let cardsArray = appState.connectedPeers[appState.activePeerIndex].cards.map { cardToDictionary(card: $0) }
             broadcastData["cards"] = cardsArray
+        case .updateCommunityCards:
+            let cardsArray = appState.communityCards.map { cardToDictionary(card: $0) }
+            broadcastData["cards"] = cardsArray
         case .endGame:
             print("Ending game...")
         default:
@@ -239,8 +243,8 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     
     
     
-
- 
+    
+    
 }
 
 
@@ -262,7 +266,7 @@ extension NetworkingController : MCNearbyServiceBrowserDelegate {
             
         }
     }
-
+    
     
     func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
         DispatchQueue.main.async {
@@ -282,7 +286,7 @@ extension NetworkingController : MCSessionDelegate {
                 print("Connected: \(peerID.displayName)")
                 if self.appState.isHost {
                     self.broadcastCommandToPeers(broadcastCommandType: .shareConnectedPeerList)
-                             }
+                }
             case .connecting:
                 print("Connecting: \(peerID.displayName)")
             case .notConnected:
@@ -300,7 +304,7 @@ extension NetworkingController : MCSessionDelegate {
             }
         }
     }
-      
+    
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         DispatchQueue.main.async {
             do {
@@ -332,7 +336,7 @@ extension NetworkingController : MCSessionDelegate {
                         self.appState.activePeerIndex = activePeerIndex
                         print(activePeerIndex)
                     }
-                
+                    
                 case BroadcastCommandType.updatePlayerMoney.rawValue:
                     print("Updating player money...")
                     print(decodedData)
@@ -386,8 +390,16 @@ extension NetworkingController : MCSessionDelegate {
                         
                     }
                     
+                case BroadcastCommandType.updateCommunityCards.rawValue:
+                    print("Updating communtiy cards...")
+                    print(decodedData)
+                    if let cards = decodedData.cards {
+                        self.appState.communityCards = cards
+                        print(self.appState.communityCards)
+                        self.appState.triggerViewUpdate.toggle()
+                    }
                     
-//                MARK: ALL COMMANDS TO BE RECEIVED FROM HOST
+                    //                MARK: ALL COMMANDS TO BE RECEIVED FROM HOST
                 case PeerToHostCommandType.check.rawValue:
                     if !self.appState.isHost {
                         print("Received host command when not host... ")
@@ -395,7 +407,7 @@ extension NetworkingController : MCSessionDelegate {
                     }
                     print("Receiving command to check...")
                     self.appState.gameController?.check()
-                
+                    
                 case PeerToHostCommandType.bet.rawValue:
                     if !self.appState.isHost {
                         print("Received host command when not host... ")
@@ -403,9 +415,9 @@ extension NetworkingController : MCSessionDelegate {
                     }
                     print("Receiving command to check...")
                     if let bet = decodedData.bet {
-                            self.appState.gameController?.bet(value: bet)
-                            print("BETTING \(bet)")
-                            self.appState.triggerViewUpdate.toggle()
+                        self.appState.gameController?.bet(value: bet)
+                        print("BETTING \(bet)")
+                        self.appState.triggerViewUpdate.toggle()
                     }
                     else {
                         print("Couldnt find bet in encodedData...")
@@ -418,8 +430,8 @@ extension NetworkingController : MCSessionDelegate {
                         return;
                     }
                     print("Receiving command to check...")
-                            self.appState.gameController?.fold()
-                            self.appState.triggerViewUpdate.toggle()
+                    self.appState.gameController?.fold()
+                    self.appState.triggerViewUpdate.toggle()
                     
                     
                 default:
@@ -459,7 +471,7 @@ extension NetworkingController {
     func broadcastUpdateGameState() {
         self.broadcastCommandToPeers(broadcastCommandType: .updateGameState)
     }
-
+    
     func broadcastUpdatePeerMoney() {
         self.broadcastCommandToPeers(broadcastCommandType: .updatePlayerMoney)
     }
@@ -474,6 +486,10 @@ extension NetworkingController {
     
     func broadcastUpdatePlayerCards() {
         self.broadcastCommandToPeers(broadcastCommandType: .updatePlayerCards)
+    }
+    
+    func broadcastUpdateCommunityCards() {
+        self.broadcastCommandToPeers(broadcastCommandType: .updateCommunityCards )
     }
 }
 
@@ -498,11 +514,11 @@ extension NetworkingController {
         switch peerToHostCommandType {
         case .check:
             print("Sending check command to host...")
-        
+            
         case .bet:
             print("UPDATING THE MONIES")
             sendingData["bet"] = self.appState.connectedPeers[self.appState.activePeerIndex].bet
-        
+            
         case .fold:
             print("Sending fold command to host...")
             

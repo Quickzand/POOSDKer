@@ -63,6 +63,12 @@ class GameController {
         self.distributeCards()
         
         
+        self.appState.communityCards = [cardDeck.draw(),cardDeck.draw(),cardDeck.draw(), cardDeck.draw(),cardDeck.draw()]
+        
+        
+        self.appState.networkingController?.broadcastUpdateCommunityCards()
+        
+        
         appState.activePeerIndex = 0
     }
     
@@ -70,15 +76,11 @@ class GameController {
     func distributeCards() {
         cardDeck = Deck()
         cardDeck.shuffle()
-        print("HERE1")
         for i in 0...appState.connectedPeers.count - 1 {
             appState.activePeerIndex = i
-            print("HERE2")
             appState.connectedPeers[i].cards = [cardDeck.draw(), cardDeck.draw()]
-            print("HERE3")
-            print("Giving our the cards \(appState.connectedPeers[i].cards)")
+            print("Giving out the cards \(appState.connectedPeers[i].cards)")
             appState.networkingController?.broadcastUpdatePlayerCards()
-            print("HERE4")
             
         }
         
