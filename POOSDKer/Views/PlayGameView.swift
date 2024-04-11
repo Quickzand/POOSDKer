@@ -21,6 +21,11 @@ struct PlayGameView: View {
     var body: some View {
         VStack {
             Text("Play Game")
+            HStack {
+//                ForEach(appState.communityCards) {card in
+//                    
+//                }
+            }
             Spacer()
             TableView()
             

@@ -46,6 +46,9 @@ class AppState : ObservableObject {
     @Published var isInGame : Bool = false
     @Published var showResultsView : Bool = false 
     
+    
+    @Published var communityCards : [CardModel] = []
+    
     var hostPeer : Peer? = nil
     
     

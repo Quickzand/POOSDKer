@@ -98,12 +98,9 @@ class GameController {
         appState.networkingController?.broadcastUpdatePeerMoney()
         
         print("\(activePeer.displayName) \t Is Checking...")
-        activePeerIndex += 1;
+       
         
-        
-        if activePeerIndex >= appState.connectedPeers.count {
-            activePeerIndex = 0;
-        }
+        self.incrementActivePeer()
         
         appState.triggerViewUpdate.toggle()
         
@@ -119,12 +116,8 @@ class GameController {
         }
         
         print("\(activePeer.displayName) \t Is Checking...")
-        activePeerIndex += 1;
-        
-        
-        if activePeerIndex >= appState.connectedPeers.count {
-            activePeerIndex = 0;
-        }
+      
+        self.incrementActivePeer()
         
         appState.triggerViewUpdate.toggle()
         
@@ -143,15 +136,29 @@ class GameController {
         
         appState.networkingController?.broadcastUpdatePlayerFoldState()
         
-        activePeerIndex += 1;
-        
-        
-        if activePeerIndex >= appState.connectedPeers.count {
-            activePeerIndex = 0;
-        }
+        self.incrementActivePeer()
         
         appState.triggerViewUpdate.toggle()
         networkingController.broadcastUpdateGameState()
+    }
+    
+    
+    func incrementActivePeer() {
+        var startingPeerIndex = self.activePeerIndex
+        self.activePeerIndex += 1 ;
+        if activePeerIndex >= appState.connectedPeers.count {
+            activePeerIndex = 0;
+        }
+        while(activePeer.isFolded) {
+            if(activePeerIndex == startingPeerIndex) {
+//                MARK: CODE FOR ending round since everyhone else is folded
+                break;
+            }
+            if activePeerIndex >= appState.connectedPeers.count {
+                activePeerIndex = 0;
+            }
+            self.activePeerIndex += 1;
+        }
         
         
         
