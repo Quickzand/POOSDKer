@@ -14,25 +14,28 @@ struct LobbyView: View {
     
     var body: some View {
         VStack {
- 
+            
             HeaderBanner(text:"Lobby", fullWidth: true)
             Spacer()
             VStack {
                 TableView()
             }
             Spacer()
-            Button{
-                appState.isInGame = true
-                appState.networkingController?.broadcastCommandToPeers(broadcastCommandType: .startGame)
+            
+            if self.appState.isHost {
+                Button{
+                    appState.isInGame = true
+                    appState.networkingController?.broadcastCommandToPeers(broadcastCommandType: .startGame)
+                }
+            label: {
+                Text("Start Game")
+                    .foregroundStyle(.black)
+                    .frame(width: UIScreen.main.bounds.width*0.4, height: 50, alignment: .center)
+                    .background(RoundedRectangle(cornerRadius: 5).fill(Color(hex: "F5F2EA")))
+            }.disabled(!self.appState.isHost)
             }
-        label: {
-            Text("Join Game")
-                .foregroundStyle(.black)
-                .frame(width: UIScreen.main.bounds.width*0.4, height: 50, alignment: .center)
-                .background(RoundedRectangle(cornerRadius: 5).fill(Color(hex: "F5F2EA")))
-        }.disabled(!self.appState.isHost)
-                
         }
+        
         .onAppear {
             if let peerHost = peerHost {
                 appState.networkingController?.requestToJoinHost(hostPeer: peerHost)
