@@ -98,6 +98,7 @@ class AppState : ObservableObject {
     
     // MARK: ALL PROPERTIES RELATED TO GAMEPLAY
     @Published var activePeerIndex : Int = 0
+    @Published var dealerButtonIndex : Int = 0
 }
 
 

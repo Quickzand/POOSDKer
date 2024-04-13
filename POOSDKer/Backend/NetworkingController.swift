@@ -142,6 +142,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         let commandType: String?
         let peers: [Peer]?
         let activePeerIndex: Int?
+        let dealerButtonIndex : Int?
         let peerID : String?
         let money : Int?
         let bet : Int?
@@ -149,7 +150,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         let cards : [CardModel]?
         
         enum CodingKeys: String, CodingKey {
-            case commandType, peers, activePeerIndex, peerID, money, bet, isFolded, cards
+            case commandType, peers, activePeerIndex, dealerButtonIndex, peerID, money, bet, isFolded, cards
         }
         
         init(from decoder: Decoder) throws {
@@ -157,6 +158,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
             commandType = try container.decodeIfPresent(String.self, forKey: .commandType)
             peers = try container.decodeIfPresent([Peer].self, forKey: .peers)
             activePeerIndex = try container.decodeIfPresent(Int.self, forKey: .activePeerIndex)
+            dealerButtonIndex = try container.decodeIfPresent(Int.self, forKey: .activePeerIndex)
             peerID = try container.decodeIfPresent(String.self, forKey: .peerID)
             money = try container.decodeIfPresent(Int.self, forKey: .money)
             bet =  try container.decodeIfPresent(Int.self, forKey: .bet)
@@ -178,6 +180,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         case updatePlayerFoldState = "updatePlayerFoldState"
         case updatePlayerCards = "updatePlayerCards"
         case updateCommunityCards = "updateCommunityCards"
+        case updateDealerButton = "updateDealerButton"
     }
     
     
@@ -218,6 +221,9 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         case .updateCommunityCards:
             let cardsArray = appState.communityCards.map { cardToDictionary(card: $0) }
             broadcastData["cards"] = cardsArray
+        case .updateDealerButton:
+            let dealerButtonIndex = appState.dealerButtonIndex
+            broadcastData["dealerButtonIndex"] = appState.dealerButtonIndex
         case .endGame:
             print("Ending game...")
         default:
@@ -399,6 +405,15 @@ extension NetworkingController : MCSessionDelegate {
                         self.appState.triggerViewUpdate.toggle()
                     }
                     
+                    
+                case BroadcastCommandType.updateDealerButton.rawValue:
+                    print("Updating dealer button...")
+                    print(decodedData)
+                    if let dealerButtonIndex = decodedData.dealerButtonIndex {
+                        self.appState.dealerButtonIndex = dealerButtonIndex
+                        self.appState.triggerViewUpdate.toggle()
+                    }
+                    
                     //                MARK: ALL COMMANDS TO BE RECEIVED FROM HOST
                 case PeerToHostCommandType.check.rawValue:
                     if !self.appState.isHost {
@@ -490,6 +505,10 @@ extension NetworkingController {
     
     func broadcastUpdateCommunityCards() {
         self.broadcastCommandToPeers(broadcastCommandType: .updateCommunityCards )
+    }
+    
+    func broadcastUpdateDealerButton() {
+        self.broadcastCommandToPeers(broadcastCommandType: .updateDealerButton)
     }
 }
 
