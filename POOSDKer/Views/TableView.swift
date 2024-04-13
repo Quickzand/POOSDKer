@@ -96,7 +96,9 @@ struct PlayerIconView : View{
                     }.opacity(!appState.isInGame ? 0 : 1)
                 }
             }
+                .padding()
                 .background(player.isFolded ? .black : .white)
+                .border(.black, width: 5)
            )
        }
        
