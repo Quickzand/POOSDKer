@@ -33,6 +33,7 @@
 		34C7B2982B8E6A9F007DA1EB /* NetworkingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */; };
 		34DACA742BC3002C00F9A0EA /* Peer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DACA732BC3002C00F9A0EA /* Peer.swift */; };
 		34F998312B9346590077B62F /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F998302B9346590077B62F /* TableView.swift */; };
+		34FDDDA02BCB3FC300A57A55 /* PlayerCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FDDD9F2BCB3FC300A57A55 /* PlayerCardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +84,7 @@
 		34C7B2972B8E6A9F007DA1EB /* NetworkingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingController.swift; sourceTree = "<group>"; };
 		34DACA732BC3002C00F9A0EA /* Peer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peer.swift; sourceTree = "<group>"; };
 		34F998302B9346590077B62F /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
+		34FDDD9F2BCB3FC300A57A55 /* PlayerCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerCardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +194,7 @@
 		34C7B2872B8E5AC7007DA1EB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				34FDDD9F2BCB3FC300A57A55 /* PlayerCardView.swift */,
 				347610352BCB0D0900318E8F /* ToastView.swift */,
 				34215FF22BA8E93F0006315D /* HeaderBanner.swift */,
 				34AADB5E2B9E7F4700F40FFC /* Basic Components */,
@@ -358,6 +361,7 @@
 				34C7B2962B8E6A4C007DA1EB /* AppState.swift in Sources */,
 				34C7B2892B8E5ADD007DA1EB /* HostGameView.swift in Sources */,
 				34C7B28B2B8E5CE6007DA1EB /* JoinGameView.swift in Sources */,
+				34FDDDA02BCB3FC300A57A55 /* PlayerCardView.swift in Sources */,
 				3433FF7F2B968B4800C90F8B /* Extensions.swift in Sources */,
 				34DACA742BC3002C00F9A0EA /* Peer.swift in Sources */,
 				342541772B9063C8002545BD /* Settings.swift in Sources */,

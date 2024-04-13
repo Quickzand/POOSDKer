@@ -60,7 +60,7 @@ struct PlayingCard: View {
             }
         .padding()
         .foregroundStyle(faceColor)
-        .aspectRatio(2/3, contentMode: .fit) 
+        .aspectRatio(2/3, contentMode: .fit)
         .background(Color("OutsetBackground"))
         .clipShape(RoundedRectangle(cornerRadius: 10.0))
         
@@ -138,6 +138,7 @@ struct PlayingCard: View {
 
 #Preview {
     PlayingCard(suit: .Clubs, face: .Queen)
+        .frame(width:150)
 }
 
 

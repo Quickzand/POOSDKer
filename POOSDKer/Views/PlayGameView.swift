@@ -30,37 +30,48 @@ struct PlayGameView: View {
         
     var body: some View {
         VStack {
-            Text("Play Game")
             HStack {
                 ForEach(appState.communityCards, id: \.self) {cardModel in
-                    PlayingCard(suit: cardModel.suit, face: cardModel.face).font(.system(size: 16))
+                    PlayingCard(suit: cardModel.suit, face: cardModel.face)
                         .frame(width:50)
+                        .font(.system(size: 16))
                     
                 }
             }
-            Spacer()
-            TableView()
+//            .padding(.top, 250)
+            ZStack {
+                TableView()
+                VStack {
+                    Spacer()
+                    HStack {
+                        if appState.clientPeer.cards.count >= 2 {
+                            let firstCard = appState.clientPeer.cards[0]
+                            let secondCard = appState.clientPeer.cards[1]
+                            
+                            PlayingCard(suit: firstCard.suit, face: firstCard.face)
+                                .frame(width:50)
+                                .rotationEffect(Angle(degrees: -10))
+                            PlayingCard(suit: secondCard.suit, face: secondCard.face)
+                                .frame(width:50)
+                                .rotationEffect(Angle(degrees: 10))
+                        } else {
+                            Text("Not enough cards")
+                        }
+                        
+                    }
+                    .offset(y:100)
+                }
+            }
             
             Spacer()
             VStack {
                 HStack {
-                    if appState.clientPeer.cards.count >= 2 {
-                                  let firstCard = appState.clientPeer.cards[0]
-                                  let secondCard = appState.clientPeer.cards[1]
-
-                        PlayingCard(suit: firstCard.suit, face: firstCard.face)
-                        PlayingCard(suit: secondCard.suit, face: secondCard.face)
-                              } else {
-                                  Text("Not enough cards")
-                              }
-                    
-                }
-                HStack {
                     Button {
                         showBetSheet = true
-//                        appState.gameController?.bet()
                     } label: {
                         Text("Bet")
+                            .padding()
+                            .background(Color("OutsetBackground"))
                     }
                     
                     Button {
@@ -75,25 +86,22 @@ struct PlayGameView: View {
 
                     } label: {
                         Text("Check")
+                            .padding()
+                            .background(Color("OutsetBackground"))
                     }.disabled(!isCheckValid()) // disables button if check is not valid
                     Button {
                         appState.gameController?.fold()
                     } label: {
                         Text("Fold")
+                            .padding()
+                            .background(Color("OutsetBackground"))
                     }
                 }.disabled(!isActivePeer())
+                    .padding(.bottom, 30)
                 
             }
             .padding()
             
-            
-            Spacer()
-            
-            Button {
-                appState.gameController?.endGame()
-            } label: {
-                Text("END GAME")
-            }
         }
         .withBackground()
         .sheet(isPresented: $showBetSheet) {
@@ -155,6 +163,6 @@ struct NumericInputView: View {
     
 }
 
-#Preview {
-    PlayGameView().environmentObject(AppState())
-}
+//#Preview {
+//    PlayGameView().environmentObject(AppState())
+//}
