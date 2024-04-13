@@ -20,7 +20,7 @@ struct ContentView: View {
                             .padding(.top, -60)
                         VStack {
                             VStack {
-                                NavigationLink("Host Game", destination: HostGameView())
+                                NavigationLink("Host Game", destination: LobbyView())
                                     .padding()
                                     .frame(maxWidth: .infinity)
                                     .background(Color("OutsetBackground"))
