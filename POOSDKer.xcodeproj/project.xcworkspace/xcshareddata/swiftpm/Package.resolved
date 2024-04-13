@@ -1,0 +1,33 @@
+{
+  "originHash" : "0224c983d542884451ef9a537eebfeae7d67045ae2c227350e23e3ab3c15500f",
+  "pins" : [
+    {
+      "identity" : "elegant-emoji-picker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Finalet/Elegant-Emoji-Picker",
+      "state" : {
+        "branch" : "main",
+        "revision" : "71d2d46092b4d550cc593614efc06438f845f6e6"
+      }
+    },
+    {
+      "identity" : "emojipicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Kelvas09/EmojiPicker.git",
+      "state" : {
+        "revision" : "d787591e2121b617209172ad6a8ebf2975f605ae",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "smile",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onmyway133/Smile",
+      "state" : {
+        "revision" : "40604722a7a56f735124e069fcbb58307637744b",
+        "version" : "2.1.0"
+      }
+    }
+  ],
+  "version" : 3
+}
