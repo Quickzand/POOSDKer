@@ -7,11 +7,10 @@
 
 import SwiftUI
 
-
 struct TableView: View {
-    @EnvironmentObject var appState : AppState
+    @EnvironmentObject var appState: AppState
     
-     let radius: CGFloat = 150 // Distance from the center circle
+    let radius: CGFloat = 150 // Distance from the center circle
     
     var body: some View {
         if let hostPeer = appState.hostPeer {
@@ -24,16 +23,26 @@ struct TableView: View {
                     .position(center)
                     .foregroundStyle(Color("OutsetBackground"))
                 
-                // Surrounding Circles
-                ForEach(0..<appState.connectedPeers.count, id: \.self) { index in
+                // Calculate position for the first player (bottom left)
+                let firstPlayerPosition = CGPoint(x: center.x - radius+50, y: center.y + radius)
+                
+                // Display the first player
+                PlayerIconView(index: 0)
+                    .position(firstPlayerPosition)
+                
+                // Position subsequent players to the right of the table then left
+                ForEach(1..<appState.connectedPeers.count, id: \.self) { index in
+                    // Calculate position based on index
+                    let playerX = center.x + CGFloat(index) * radius
+                    let playerY = center.y - radius
                     PlayerIconView(index: index)
-                    .position(x: center.x + radius * cos(CGFloat(index) * 2 * .pi / CGFloat(appState.connectedPeers.count) - .pi / 2.0),
-                              y: center.y + radius * sin(CGFloat(index) * 2 * .pi / CGFloat(appState.connectedPeers.count) - .pi / 2.0))
+                        .position(x: playerX, y: playerY)
                 }
             }
         }
     }
 }
+
 
 
 struct PlayerIconView : View{
@@ -50,28 +59,44 @@ struct PlayerIconView : View{
            let player = appState.connectedPeers[index]
 
            return AnyView(
+            VStack {
             HStack {
                 ZStack {
+                    
                     Circle()
-                        .frame(width: 60)
+                        .frame(width: 40)
                         .foregroundStyle(Color(hex: player.playerColor))
-                        .padding()
+                    
                     
                     if appState.hostPeer?.id == player.id {
                         Image(systemName: "crown.fill")
                             .foregroundStyle(Color.secondary)
                     }
                 }
+                
+                Text(player.displayName)
+                    .foregroundStyle(appState.gameController?.activePeer.id == player.id ? (Color(hex: player.playerColor)) : .white)
+            }
                 VStack (alignment: .leading) {
-                    Text(player.displayName)
-                        .foregroundStyle(appState.gameController?.activePeer.id == player.id ? .green : .white)
+                    
                     VStack(alignment: .leading) {
-                        Text("Money: $\(player.money)").foregroundStyle(.white)
-                        Text("Bet: $\(player.bet)").foregroundStyle(.white)
+                        Text(" Money: $\(player.money) ").foregroundStyle(.black)
+                            //.padding()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(.black, lineWidth: 2)
+                            )
+                        
+                        Text(" Bet: $\(player.bet) ").foregroundStyle(.black)
+                            //.padding()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(.black, lineWidth: 2)
+                            )
                     }.opacity(!appState.isInGame ? 0 : 1)
                 }
             }
-                .background(player.isFolded ? .black : .brown)
+                .background(player.isFolded ? .black : .white)
            )
        }
        
