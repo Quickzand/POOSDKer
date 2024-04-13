@@ -3,7 +3,7 @@
 //  POOSDKer
 //
 //  Created by Matthew Sand on 2/27/24.
-//  Edited by Maximus Smith on 4/13/24.
+//
 
 import SwiftUI
 
@@ -66,13 +66,11 @@ struct PlayGameView: View {
                     Button {
                         // check implementation
                         if(isCheckValid()){
-                            // bets the difference between the current highest bet and the current peer's bet
-                            appState.gameController?.bet(appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet)
                             appState.gameController?.check()
                         }else{
                             print("Poor person detected...") // poor person detected
                         }
-
+                        appState.gameController?.check()
                     } label: {
                         Text("Check")
                     }.disabled(!isCheckValid()) // disables button if check is not valid
