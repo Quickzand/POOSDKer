@@ -67,7 +67,7 @@ struct PlayGameView: View {
                         // check implementation
                         if(isCheckValid()){
                             // bets the difference between the current highest bet and the current peer's bet
-                            appState.gameController?.bet(appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet)
+                            appState.gameController?.bet(value: appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet)
                             appState.gameController?.check()
                         }else{
                             print("Poor person detected...") // poor person detected
