@@ -30,6 +30,16 @@ class GameController {
         }
     }
     
+    var dealerButtonIndex: Int {
+        get {
+            return appState.dealerButtonIndex
+        }
+        
+        set {
+            appState.dealerButtonIndex = newValue
+        }
+    }
+    
     var activePeer : Peer {
         get {
             guard appState.connectedPeers.indices.contains(activePeerIndex) else { return appState.connectedPeers[0] }
@@ -40,6 +50,18 @@ class GameController {
             appState.connectedPeers[activePeerIndex] = newValue
         }
        }
+    
+    
+    var dealerButtonPeer : Peer {
+        get {
+            guard appState.connectedPeers.indices.contains(dealerButtonIndex) else { return appState.connectedPeers[0] }
+            return appState.connectedPeers[dealerButtonIndex]
+        }
+        
+        set {
+            appState.connectedPeers[dealerButtonIndex] = newValue
+        }
+    }
     
     
     init(appState: AppState) {
