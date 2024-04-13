@@ -54,10 +54,16 @@ struct PlayGameView: View {
                     }
                     
                     Button {
+                        // check implementation
+                        if(isCheckValid()){
+                            appState.gameController?.check()
+                        }else{
+                            print("Poor person detected...") // poor person detected
+                        }
                         appState.gameController?.check()
                     } label: {
                         Text("Check")
-                    }
+                    }.disabled(!isCheckValid()) // disables button if check is not valid
                     Button {
                         appState.gameController?.fold()
                     } label: {
@@ -133,6 +139,19 @@ struct NumericInputView: View {
         }
       
     }
+    
+    
+}
+
+func isCheckValid() -> Bool{
+    @EnvironmentObject var appState : AppState
+    
+    // check if MaxBet - currentBet > UserMoney -> disable check button
+    if(appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet 
+        > appState.connectedPeers[appState.activePeerIndex].money){
+        return false  
+    }
+    return true;
 }
 
 #Preview {
