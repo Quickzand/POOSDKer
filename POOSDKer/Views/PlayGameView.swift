@@ -107,7 +107,8 @@ struct NumericInputView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var appState : AppState
     @FocusState private var isInputFocused: Bool
-    
+    @State private var showToast = false
+    @State private var toastErrorType: ToastView.ToastErrorType = .zeroBet
     
     var body: some View {
         VStack {
@@ -130,6 +131,7 @@ struct NumericInputView: View {
                 }
             }
         }
+        .toastView(toastErrorType: .zeroBet, shown: $showToast)
         .padding()
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // Adjust the delay as needed
@@ -141,7 +143,16 @@ struct NumericInputView: View {
     
     func isBetValid() -> Bool{
         if let bet = Int(numericInput) {
-            if bet == 0 || bet < appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet || bet > appState.connectedPeers[appState.activePeerIndex].money {
+            if bet == 0 {
+                toastErrorType = .zeroBet
+                return false
+            }
+            if bet < appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet {|| bet > appState.connectedPeers[appState.activePeerIndex].money {
+                toastErrorType = .lowBet
+                return false
+            }
+            if bet > appState.connectedPeers[appState.activePeerIndex].money {
+                toastErrorType = .exceedFunds
                 return false
             }
             return true

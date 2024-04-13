@@ -9,7 +9,11 @@ import SwiftUI
 
 struct ToastView: View {
     enum ToastErrorType: String {
-        case lowBet = "Bet Must Meet Current Minimum"
+        case lowBet = "Bet Must Meet Current Minimum Bet"
+        
+        case exceedFunds = "The bet exceeds your funds."
+        
+        case zeroBet = "Cannot bet 0. Look into checking."
     }
     
     var errorType: ToastErrorType
@@ -83,7 +87,7 @@ struct ToastPreview: View {
             .clipShape(Capsule())
             Spacer()
         }
-        .toastView(toastErrorType: .lowBet, shown: $showToast)
+        .toastView(toastErrorType: .zeroBet, shown: $showToast)
     }
 }
 
