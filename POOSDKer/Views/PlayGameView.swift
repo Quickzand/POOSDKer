@@ -3,7 +3,7 @@
 //  POOSDKer
 //
 //  Created by Matthew Sand on 2/27/24.
-//
+//  Edited by Maximus Smith on 4/13/24.
 
 import SwiftUI
 
@@ -17,6 +17,16 @@ struct PlayGameView: View {
     @State private var betInput = ""
     @State private var showBetSheet = false
         
+    // validating $$ for check 
+    func isCheckValid() -> Bool{
+        
+        // check if MaxBet - currentBet > UserMoney -> disable check button
+        if(appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet
+           > appState.connectedPeers[appState.activePeerIndex].money){
+            return false
+        }
+        return true;
+    }
         
     var body: some View {
         VStack {
@@ -54,10 +64,18 @@ struct PlayGameView: View {
                     }
                     
                     Button {
-                        appState.gameController?.check()
+                        // check implementation
+                        if(isCheckValid()){
+                            // bets the difference between the current highest bet and the current peer's bet
+                            appState.gameController?.bet(value: appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet)
+                            appState.gameController?.check()
+                        }else{
+                            print("Poor person detected...") // poor person detected
+                        }
+
                     } label: {
                         Text("Check")
-                    }
+                    }.disabled(!isCheckValid()) // disables button if check is not valid
                     Button {
                         appState.gameController?.fold()
                     } label: {
@@ -133,6 +151,8 @@ struct NumericInputView: View {
         }
       
     }
+    
+    
 }
 
 #Preview {
