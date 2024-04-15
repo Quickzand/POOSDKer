@@ -288,6 +288,13 @@ class GameController {
         while(activePeer.isFolded) {
             if(activePeerIndex == startingPeerIndex) {
 //                MARK: CODE FOR ending round since everyhone else is folded
+                appState.connectedPeers[activePeerIndex].money += appState.getTotalPot()
+                // reset round index and move the dealer button to the next player
+                roundIndex = 0
+                dealerButtonIndex += 1
+                if dealerButtonIndex >= appState.connectedPeers.count {
+                    dealerButtonIndex = 0
+                }
                 break;
             }
             if activePeerIndex >= appState.connectedPeers.count {
@@ -308,8 +315,33 @@ class GameController {
         }
         if roundIndex >= 4 {
             // determing winner and end game
+            var rankedPlayer: [Peer] = []
+            rankedPlayer = orderPeersByHand(peers: appState.connectedPeers)
+            
+            // gets the index of the sorted ranked players
+            var index = appState.connectedPeers.firstIndex(where: {$0.id == rankedPlayer[0].id}) ?? 0
+            appState.connectedPeers[index].money += appState.getTotalPot()
+            
+            // now return all player attributes to original
+            for i in 0...appState.connectedPeers.count - 1 {
+                resetPlayers(index: i)
+            }
+            
+            // reset round index and move the dealer button to the next player
+            roundIndex = 0
+            dealerButtonIndex += 1
+            if dealerButtonIndex >= appState.connectedPeers.count {
+                dealerButtonIndex = 0
+            }
         }
-        
+    }
+    
+    func resetPlayers(index: Int) {
+        appState.connectedPeers[index].bet = 0
+        appState.connectedPeers[index].isFolded = false
+        appState.connectedPeers[index].cards = []
+        appState.connectedPeers[index].prevBet = 0
+        appState.connectedPeers[index].waiting = true
     }
     
     func endGame() {

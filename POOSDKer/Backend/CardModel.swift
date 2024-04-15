@@ -150,5 +150,11 @@ func compareHands(hand1: [CardModel], hand2: [CardModel]) -> String {
 /*
  Return a rank value and store it activePeer attribute called self.rankValue
  */
-
+func orderPeersByHand(peers: [Peer]) -> [Peer] {
+    return peers.sorted { (peer1: Peer, peer2: Peer) -> Bool in
+        let handRank1 = rankHand(hand: peer1.cards)
+        let handRank2 = rankHand(hand: peer2.cards)
+        return handRank1 > handRank2
+    }
+}
 
