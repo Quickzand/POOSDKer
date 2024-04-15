@@ -19,7 +19,7 @@ struct PlayGameView: View {
         
     // validating $$ for check 
     func isCheckValid() -> Bool{
-        
+        guard appState.connectedPeers.indices.contains(appState.activePeerIndex) else { return false}
         // check if MaxBet - currentBet > UserMoney -> disable check button
         if(appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet
            > appState.connectedPeers[appState.activePeerIndex].money){
@@ -79,7 +79,6 @@ struct PlayGameView: View {
                         if(isCheckValid()){
                             // bets the difference between the current highest bet and the current peer's bet
                             appState.gameController?.bet(value: appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet)
-                            appState.gameController?.check()
                         }else{
                             print("Poor person detected...") // poor person detected
                         }
