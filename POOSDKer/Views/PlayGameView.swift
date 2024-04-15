@@ -29,6 +29,7 @@ struct PlayGameView: View {
     }
         
     var body: some View {
+
         VStack {
             HStack {
                 ForEach(appState.communityCards, id: \.self) {cardModel in
@@ -38,6 +39,8 @@ struct PlayGameView: View {
                     
                 }
             }
+            .frame(height:125)
+            .padding(.top, 75)
             HStack {
                 VStack {
                     Text("Balance")
@@ -47,7 +50,7 @@ struct PlayGameView: View {
                 .background(Color("OutsetBackground"))
                 .clipShape(RoundedRectangle(cornerRadius: 15.0))
                 .padding(.horizontal, 1)
-                .padding(.top, 4)
+                    .padding(.top, 4)
                 
                 VStack {
                     Text("Pot")
@@ -56,11 +59,11 @@ struct PlayGameView: View {
                     .background(Color("OutsetBackground"))
                     .clipShape(RoundedRectangle(cornerRadius: 15.0))
                     .padding(.horizontal, 1)
-                    .padding(.top, 4)
+                        .padding(.top, 4)
                     
-    
+
             }
-//            .padding(.top, 250)
+      
             ZStack {
                 TableView()
                 VStack {

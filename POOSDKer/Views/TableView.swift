@@ -51,6 +51,19 @@ struct TableView: View {
                 displayedPeersList = appState.connectedPeers
             }
         }
+        .onChange(of: appState.connectedPeers) {
+            if appState.isInGame {
+                displayedPeersList = appState.connectedPeers.filter({peer in
+                    if peer.id == appState.clientPeer.id {
+                        return false
+                    }
+                    return true
+                })
+            }
+            else {
+                displayedPeersList = appState.connectedPeers
+            }
+        }
     }
 }
 

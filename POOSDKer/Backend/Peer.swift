@@ -8,7 +8,7 @@
 import Foundation
 import MultipeerConnectivity
 
-struct Peer: Identifiable, Codable {
+struct Peer: Identifiable, Codable, Equatable {
     var id: String // Use a unique identifier that you can match with MCPeerID.displayName
     var displayName: String
     var playerColor : String
