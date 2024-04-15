@@ -19,7 +19,7 @@ class GameController {
     
     var cardDeck : Deck = Deck()
     
-    var roundIndex : Int = 1 // 0 = pre, 1 = flop, 2 = turn, 3 = river
+    var roundIndex : Int = 0 // 0 = pre, 1 = flop, 2 = turn, 3 = river
     
     var networkingController : NetworkingController {
         return appState.networkingController!
@@ -118,12 +118,12 @@ class GameController {
         // check if current player matches the prevPlayer bet
         var index = activePeerIndex - 1
         if index < 0 {
-            index = activePeerIndex - 1
+            index = activePeerIndex
         }
         
         while true {
             if index < 0 {
-                index = activePeerIndex - 1
+                index = activePeerIndex
             }
             // all players have matching bets
             if index == activePeerIndex{
@@ -147,6 +147,16 @@ class GameController {
         return false
     }
     
+    // checks if all players are ready to move onto the next round
+    func arePlayersReady() -> Bool {
+        for i in 0...appState.connectedPeers.count - 1 {
+            if appState.connectedPeers[i].waiting {
+                return false
+            }
+        }
+        return true
+    }
+    
     func distributeCards() {
         cardDeck = Deck()
         cardDeck.shuffle()
@@ -166,6 +176,16 @@ class GameController {
             activePeer.bet = value
             self.appState.networkingController?.sendBetToHost()
             return;
+        }
+        
+        activePeer.waiting = false
+        
+        // when someone bets every player that is alive will now be waiting
+        for i in 0...appState.connectedPeers.count - 1{
+            if i == activePeerIndex {
+                continue
+            }
+            appState.connectedPeers[i].waiting = true
         }
         
         activePeer.bet += value
@@ -190,6 +210,8 @@ class GameController {
             self.appState.networkingController?.sendCheckToHost()
             return;
         }
+        
+        self.appState.connectedPeers[activePeerIndex].waiting = false
         
         print("\(activePeer.displayName) \t Is Checking...")
         
@@ -260,8 +282,18 @@ class GameController {
         }
         
         // this checks if every player bets match
-        if self.matchingBetsCheck() {
-            roundIndex += 1
+        if roundIndex >= 1 {
+            if self.matchingBetsCheck() && self.arePlayersReady() {
+                roundIndex += 1
+            }
+        }
+        else {
+            if self.matchingBetsCheck() {
+                roundIndex += 1
+            }
+        }
+        if roundIndex >= 4 {
+            // determing winner and end game
         }
         
     }
