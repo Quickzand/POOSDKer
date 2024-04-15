@@ -112,11 +112,13 @@ class GameController {
     func bet(value : Int) {
         if !self.appState.isHost {
             activePeer.bet = value
+            activePeer.totalBets = value
             self.appState.networkingController?.sendBetToHost()
             return;
         }
         
         activePeer.bet += value
+        activePeer.totalBets += value
         activePeer.money -= value
         appState.networkingController?.broadcastUpdatePeerBet()
         appState.networkingController?.broadcastUpdatePeerMoney()
