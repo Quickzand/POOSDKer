@@ -333,6 +333,11 @@ class GameController {
             if dealerButtonIndex >= appState.connectedPeers.count {
                 dealerButtonIndex = 0
             }
+            
+            // clear deck and create a new deck and shuffle
+            appState.communityCards = []
+            self.cardDeck = Deck()
+            self.cardDeck.shuffle()
         }
     }
     
