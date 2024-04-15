@@ -114,7 +114,8 @@ struct NumericInputView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var appState : AppState
     @FocusState private var isInputFocused: Bool
-    
+    @State private var showToast = false
+    @State private var toastErrorType: ToastView.ToastErrorType = .zeroBet
     
     var body: some View {
         VStack {
@@ -143,17 +144,35 @@ struct NumericInputView: View {
                 isInputFocused = true
             }
         }
+        .toastView(toastErrorType: toastErrorType, shown: $showToast)
     }
     
     
     func isBetValid() -> Bool{
         if let bet = Int(numericInput) {
-            if bet == 0 || bet < appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet || bet > appState.connectedPeers[appState.activePeerIndex].money {
+            if bet == 0 {
+                toastErrorType = .zeroBet
+                print("Zero bet detected")
+                showToast = true
                 return false
             }
+            if bet < appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet{
+                toastErrorType = .lowBet
+                print("Low bet detected")
+                showToast = true
+                return false
+            }
+            if bet > appState.connectedPeers[appState.activePeerIndex].money {
+                toastErrorType = .exceedFunds
+                print("Poor person detected")
+                showToast = true
+                return false
+            }
+            showToast = false
             return true
         }
         else {
+            showToast = false
             return false
         }
       
