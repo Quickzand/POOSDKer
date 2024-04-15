@@ -86,7 +86,7 @@ class AppState : ObservableObject {
     var currentHighestBet : Int {
         var currentHighest = 0
         connectedPeers.forEach {peer in
-            if peer.bet > currentHighest {
+            if peer.bet > currentHighest && !peer.isFolded{
                 currentHighest = peer.bet
             }
         }

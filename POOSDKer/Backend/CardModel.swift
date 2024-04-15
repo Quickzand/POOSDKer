@@ -147,6 +147,8 @@ func compareHands(hand1: [CardModel], hand2: [CardModel]) -> String {
         return "It's a tie. Further tie-breaking needed."
     }
 }
-
+/*
+ Return a rank value and store it activePeer attribute called self.rankValue
+ */
 
 
