@@ -38,6 +38,28 @@ struct PlayGameView: View {
                     
                 }
             }
+            HStack {
+                VStack {
+                    Text("Balance")
+                    Text("$\(appState.clientPeer.money)")
+                }
+                .frame(maxWidth: .infinity)
+                .background(Color("OutsetBackground"))
+                .clipShape(RoundedRectangle(cornerRadius: 15.0))
+                .padding(.horizontal, 1)
+                .padding(.top, 4)
+                
+                VStack {
+                    Text("Pot")
+                    Text("$\(appState.getTotalPot())")
+                }.frame(maxWidth: .infinity)
+                    .background(Color("OutsetBackground"))
+                    .clipShape(RoundedRectangle(cornerRadius: 15.0))
+                    .padding(.horizontal, 1)
+                    .padding(.top, 4)
+                    
+    
+            }
 //            .padding(.top, 250)
             ZStack {
                 TableView()
