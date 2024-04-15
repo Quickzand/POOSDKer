@@ -17,6 +17,9 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     var mcSession: MCSession!
     var serviceAdvertiser: MCNearbyServiceAdvertiser!
     var serviceBrowser: MCNearbyServiceBrowser!
+    
+    var isJoinable = false
+    
     let serviceType = "poosdker"
     
     init(appState: AppState) {
@@ -72,8 +75,9 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     
     func startHosting() {
         print("Starting hosting...")
+        isJoinable = true
         // Setup advertiser with discovery info including both displayName and a unique ID
-        let discoveryInfo = ["displayName": appState.settings.displayName, "hostID": self.appState.UID]
+        let discoveryInfo = ["displayName": appState.settings.displayName, "hostID": self.appState.UID, "isJoinable": self.isJoinable ? "true" : "false"]
         self.serviceAdvertiser = MCNearbyServiceAdvertiser(peer: appState.peerID, discoveryInfo: discoveryInfo, serviceType: serviceType)
         self.serviceAdvertiser.delegate = self
         appState.connectedPeers = []
@@ -87,6 +91,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     
     func stopHosting() {
         print("Stopping hosting...")
+        isJoinable = false
         serviceAdvertiser.stopAdvertisingPeer()
         appState.hostPeer = nil
     }
@@ -261,12 +266,22 @@ extension NetworkingController : MCNearbyServiceBrowserDelegate {
             let displayName = info["displayName"] ?? "Unknown"
             let hostID = info["hostID"] ?? "UnknownID"
             let playerColor = info["playerColor"] ?? "UnknownID"
+            let isJoinableString = info["isJoinable"] ?? "false"
+            
+            var isJoinable = false
+            
+            if isJoinableString == "true" {
+                isJoinable = true
+            }
             
             print("Discovered a peer: \(displayName) with ID: \(hostID)")
             if(!self.appState.discoveredPeers.contains(where: {tempPeer in
                 return tempPeer.id == hostID
             })) {
                 print("Discovered host ")
+                if !isJoinable {
+                    return
+                }
                 self.appState.discoveredPeers.append(Peer(id: hostID, displayName: displayName, playerColor: playerColor, mcPeerID: peerID))
             }
             

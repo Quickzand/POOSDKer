@@ -46,12 +46,14 @@ struct LobbyView: View {
         .onDisappear {
             if(!appState.isInGame) {
                 if(appState.isHost) {
-                    
                     appState.networkingController?.stopHosting();
                 }
                 else {
                     appState.networkingController?.disconnectFromHost()
                 }
+            }
+            if(appState.isHost && appState.isInGame) {
+                appState.networkingController?.isJoinable = false
             }
         }
         .navigationDestination(isPresented: $appState.isInGame) {
