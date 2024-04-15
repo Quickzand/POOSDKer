@@ -116,6 +116,9 @@ class GameController {
     // playing the pre round true if completed false if not
     func matchingBetsCheck() -> Bool {
         // check if current player matches the prevPlayer bet
+        if appState.connectedPeers.count == 1 {
+            return true
+        }
         var index = activePeerIndex - 1
         if index < 0 {
             index = activePeerIndex - 1
