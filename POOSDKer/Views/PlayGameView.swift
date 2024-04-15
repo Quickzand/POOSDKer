@@ -131,33 +131,40 @@ struct NumericInputView: View {
                 }
             }
         }
-        .toastView(toastErrorType: .zeroBet, shown: $showToast)
         .padding()
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // Adjust the delay as needed
                 isInputFocused = true
             }
         }
-    }
+    }.toastView(toastErrorType: toastErrorType, shown: $showToast)
     
     
     func isBetValid() -> Bool{
         if let bet = Int(numericInput) {
             if bet == 0 {
                 toastErrorType = .zeroBet
+                print("Zero bet detected")
+                showToast = true
                 return false
             }
-            if bet < appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet {|| bet > appState.connectedPeers[appState.activePeerIndex].money {
+            if bet < appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet{
                 toastErrorType = .lowBet
+                print("Low bet detected")
+                showToast = true
                 return false
             }
             if bet > appState.connectedPeers[appState.activePeerIndex].money {
                 toastErrorType = .exceedFunds
+                print("Poor person detected")
+                showToast = true
                 return false
             }
+            showToast = false
             return true
         }
         else {
+            showToast = false
             return false
         }
       
