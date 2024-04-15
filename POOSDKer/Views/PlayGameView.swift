@@ -106,6 +106,7 @@ struct PlayGameView: View {
         .sheet(isPresented: $showBetSheet) {
             NumericInputView(numericInput: $betInput)
         }
+
     }
 }
 
