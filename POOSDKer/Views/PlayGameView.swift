@@ -38,6 +38,13 @@ struct PlayGameView: View {
                     
                 }
             }
+            HStack {
+                VStack {
+                    Text("Balance")
+                    Text("$\(appState.clientPeer.money)")
+                }
+    
+            }
 //            .padding(.top, 250)
             ZStack {
                 TableView()
@@ -71,7 +78,7 @@ struct PlayGameView: View {
                     } label: {
                         Text("Bet")
                             .padding()
-                            .background(Color("OutsetBackground"))
+//                            .background(Color("OutsetBackground"))
                     }
                     
                     Button {
