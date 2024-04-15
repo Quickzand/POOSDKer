@@ -288,25 +288,7 @@ class GameController {
         while(activePeer.isFolded) {
             if(activePeerIndex == startingPeerIndex) {
 //                MARK: CODE FOR ending round since everyhone else is folded
-                appState.connectedPeers[activePeerIndex].money += appState.getTotalPot()
-                
-                // now return all player attributes to original
-                for i in 0...appState.connectedPeers.count - 1 {
-                    resetPlayers(index: i)
-                }
-                
-                // reset round index and move the dealer button to the next player
-                roundIndex = 0
-                dealerButtonIndex += 1
-                if dealerButtonIndex >= appState.connectedPeers.count {
-                    dealerButtonIndex = 0
-                }
-                
-                // clear deck and create a new deck and shuffle
-                appState.communityCards = []
-                self.cardDeck = Deck()
-                self.cardDeck.shuffle()
-                
+                roundIndex = 5
                 break;
             }
             if activePeerIndex >= appState.connectedPeers.count {
@@ -315,10 +297,30 @@ class GameController {
             self.activePeerIndex += 1;
         }
         
+        // if a player folds then a special round is played where the remaining player wins the money
+        if roundIndex == 5 {
+            appState.connectedPeers[activePeerIndex].money += appState.getTotalPot()
+            
+            // now return all player attributes to original
+            for i in 0...appState.connectedPeers.count - 1 {
+                resetPlayers(index: i)
+            }
+            
+            // reset round index and move the dealer button to the next player
+            roundIndex = 0
+            dealerButtonIndex += 1
+            if dealerButtonIndex >= appState.connectedPeers.count {
+                dealerButtonIndex = 0
+            }
+            
+            // clear deck and create a new deck and shuffle
+            appState.communityCards = []
+            self.cardDeck = Deck()
+            self.cardDeck.shuffle()
+        }
+        
         // this checks if every player bets match
-        print("Are ready: \(self.arePlayersReady())")
-        print("Matching bets check: \(self.matchingBetsCheck())")
-        if self.matchingBetsCheck() && self.arePlayersReady() {
+        else if self.matchingBetsCheck() && self.arePlayersReady() {
             roundIndex += 1
             self.newRoundStart()
             for i in  0...appState.connectedPeers.count - 1 {
