@@ -15,6 +15,7 @@ struct Peer: Identifiable, Codable {
     
     var money : Int
     var bet : Int
+    var totalBets : Int = 0
     
     var isFolded : Bool
     

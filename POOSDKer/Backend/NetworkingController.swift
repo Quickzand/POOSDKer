@@ -362,6 +362,7 @@ extension NetworkingController : MCSessionDelegate {
                     if let peerID = decodedData.peerID, let bet = decodedData.bet {
                         if let index = self.appState.connectedPeers.firstIndex(where: { $0.id == peerID }) {
                             self.appState.connectedPeers[index].bet = bet
+                            self.appState.connectedPeers[index].totalBets = bet
                             self.appState.triggerViewUpdate.toggle()
                         } else {
                             print("Peer with ID \(peerID) not found.")
