@@ -115,6 +115,9 @@ class GameController {
     
     // playing the pre round true if completed false if not
     func matchingBetsCheck() -> Bool {
+        if appState.connectedPeers.count <= 1 {
+            return true
+        }
         // check if current player matches the prevPlayer bet
         var index = activePeerIndex - 1
         if index < 0 {
@@ -127,7 +130,6 @@ class GameController {
             }
             // all players have matching bets
             if index == activePeerIndex{
-                self.newRoundStart()
                 return true
             }
             // skips folded players
@@ -149,6 +151,9 @@ class GameController {
     
     // checks if all players are ready to move onto the next round
     func arePlayersReady() -> Bool {
+        if appState.connectedPeers.count <= 1 {
+            return true
+        }
         for i in 0...appState.connectedPeers.count - 1 {
             if appState.connectedPeers[i].waiting {
                 return false
@@ -282,14 +287,11 @@ class GameController {
         }
         
         // this checks if every player bets match
-        if roundIndex >= 1 {
-            if self.matchingBetsCheck() && self.arePlayersReady() {
-                roundIndex += 1
-            }
-        }
-        else {
-            if self.matchingBetsCheck() {
-                roundIndex += 1
+        if self.matchingBetsCheck() && self.arePlayersReady() {
+            roundIndex += 1
+            self.newRoundStart()
+            for i in  0...appState.connectedPeers.count - 1 {
+                appState.connectedPeers[i].waiting = true
             }
         }
         if roundIndex >= 4 {
