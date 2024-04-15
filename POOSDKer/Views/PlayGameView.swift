@@ -137,7 +137,8 @@ struct NumericInputView: View {
                 isInputFocused = true
             }
         }
-    }.toastView(toastErrorType: toastErrorType, shown: $showToast)
+        .toastView(toastErrorType: toastErrorType, shown: $showToast)
+    }
     
     
     func isBetValid() -> Bool{
