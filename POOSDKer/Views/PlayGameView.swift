@@ -43,6 +43,21 @@ struct PlayGameView: View {
                     Text("Balance")
                     Text("$\(appState.clientPeer.money)")
                 }
+                .frame(maxWidth: .infinity)
+                .background(Color("OutsetBackground"))
+                .clipShape(RoundedRectangle(cornerRadius: 15.0))
+                .padding(.horizontal, 1)
+                .padding(.top, 4)
+                
+                VStack {
+                    Text("Pot")
+                    Text("$\(appState.getTotalPot())")
+                }.frame(maxWidth: .infinity)
+                    .background(Color("OutsetBackground"))
+                    .clipShape(RoundedRectangle(cornerRadius: 15.0))
+                    .padding(.horizontal, 1)
+                    .padding(.top, 4)
+                    
     
             }
 //            .padding(.top, 250)
@@ -78,7 +93,7 @@ struct PlayGameView: View {
                     } label: {
                         Text("Bet")
                             .padding()
-//                            .background(Color("OutsetBackground"))
+                            .background(Color("OutsetBackground"))
                     }
                     
                     Button {

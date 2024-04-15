@@ -95,6 +95,15 @@ class AppState : ObservableObject {
     }
     
     
+    func getTotalPot() -> Int {
+        var total = 0;
+        connectedPeers.forEach {peer in
+            total += peer.bet
+        }
+        return total
+    }
+    
+    
     
     // MARK: ALL PROPERTIES RELATED TO GAMEPLAY
     @Published var activePeerIndex : Int = 0
