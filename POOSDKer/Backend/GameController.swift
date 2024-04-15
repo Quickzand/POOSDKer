@@ -289,12 +289,24 @@ class GameController {
             if(activePeerIndex == startingPeerIndex) {
 //                MARK: CODE FOR ending round since everyhone else is folded
                 appState.connectedPeers[activePeerIndex].money += appState.getTotalPot()
+                
+                // now return all player attributes to original
+                for i in 0...appState.connectedPeers.count - 1 {
+                    resetPlayers(index: i)
+                }
+                
                 // reset round index and move the dealer button to the next player
                 roundIndex = 0
                 dealerButtonIndex += 1
                 if dealerButtonIndex >= appState.connectedPeers.count {
                     dealerButtonIndex = 0
                 }
+                
+                // clear deck and create a new deck and shuffle
+                appState.communityCards = []
+                self.cardDeck = Deck()
+                self.cardDeck.shuffle()
+                
                 break;
             }
             if activePeerIndex >= appState.connectedPeers.count {
