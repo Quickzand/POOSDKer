@@ -16,8 +16,7 @@ struct PlayGameView: View {
     
     @State private var betInput = ""
     @State private var showBetSheet = false
-        
-    // validating $$ for check 
+
     func isCheckValid() -> Bool{
         guard appState.connectedPeers.indices.contains(appState.activePeerIndex) else { return false}
         // check if MaxBet - currentBet > UserMoney -> disable check button

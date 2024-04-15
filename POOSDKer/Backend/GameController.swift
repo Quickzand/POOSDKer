@@ -90,8 +90,27 @@ class GameController {
         
         
         //self.appState.networkingController?.broadcastUpdateCommunityCards()
-        
-        appState.activePeerIndex = appState.dealerButtonIndex + 3
+        if appState.connectedPeers.count == 1 {
+            appState.activePeerIndex = appState.dealerButtonIndex + 0
+        }
+        if appState.connectedPeers.count == 2 {
+            appState.activePeerIndex = appState.dealerButtonIndex + 1
+            if appState.activePeerIndex >= appState.connectedPeers.count {
+                appState.activePeerIndex = 0
+            }
+        }
+        if appState.connectedPeers.count == 3 {
+            appState.activePeerIndex = appState.dealerButtonIndex + 2
+            if appState.activePeerIndex >= appState.connectedPeers.count {
+                appState.activePeerIndex = 0
+            }
+        }
+        else {
+            appState.activePeerIndex = appState.dealerButtonIndex + 3
+            if appState.activePeerIndex >= appState.connectedPeers.count {
+                appState.activePeerIndex = 0
+            }
+        }
     }
     
     // playing the pre round true if completed false if not
