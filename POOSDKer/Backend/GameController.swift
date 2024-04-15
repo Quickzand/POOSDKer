@@ -156,6 +156,7 @@ class GameController {
         }
         for i in 0...appState.connectedPeers.count - 1 {
             if appState.connectedPeers[i].waiting {
+                print(appState.connectedPeers[i].displayName)
                 return false
             }
         }
@@ -183,14 +184,23 @@ class GameController {
             return;
         }
         
-        activePeer.waiting = false
         
-        // when someone bets every player that is alive will now be waiting
-        for i in 0...appState.connectedPeers.count - 1{
-            if i == activePeerIndex {
-                continue
+        
+
+        
+        print(value)
+        print(appState.currentHighestBet)
+        if value == appState.currentHighestBet {
+            self.appState.connectedPeers[activePeerIndex].waiting = false
+        }
+        else {
+            // when someone bets every player that is alive will now be waiting
+            for i in 0...appState.connectedPeers.count - 1{
+                if i == activePeerIndex {
+                    continue
+                }
+                appState.connectedPeers[i].waiting = true
             }
-            appState.connectedPeers[i].waiting = true
         }
         
         activePeer.bet += value
@@ -287,6 +297,8 @@ class GameController {
         }
         
         // this checks if every player bets match
+        print("Are ready: \(self.arePlayersReady())")
+        print("Matching bets check: \(self.matchingBetsCheck())")
         if self.matchingBetsCheck() && self.arePlayersReady() {
             roundIndex += 1
             self.newRoundStart()
