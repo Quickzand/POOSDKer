@@ -3,7 +3,7 @@
 //  POOSDKer
 //
 //  Created by Matthew Sand on 2/27/24.
-//
+//  Edited by Maximus Smith on 4/13/24.
 
 import SwiftUI
 
@@ -16,71 +16,97 @@ struct PlayGameView: View {
     
     @State private var betInput = ""
     @State private var showBetSheet = false
-        
+
+    func isCheckValid() -> Bool{
+        guard appState.connectedPeers.indices.contains(appState.activePeerIndex) else { return false}
+        return true
+        // check if MaxBet - currentBet > UserMoney -> disable check button
+        if(appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet
+           > appState.connectedPeers[appState.activePeerIndex].money){
+            return false
+        }
+        return true;
+    }
         
     var body: some View {
         VStack {
-            Text("Play Game")
             HStack {
                 ForEach(appState.communityCards, id: \.self) {cardModel in
-                    PlayingCard(suit: cardModel.suit, face: cardModel.face).font(.system(size: 16))
+                    PlayingCard(suit: cardModel.suit, face: cardModel.face)
                         .frame(width:50)
+                        .font(.system(size: 16))
                     
                 }
             }
-            Spacer()
-            TableView()
+//            .padding(.top, 250)
+            ZStack {
+                TableView()
+                VStack {
+                    Spacer()
+                    HStack {
+                        if appState.clientPeer.cards.count >= 2 {
+                            let firstCard = appState.clientPeer.cards[0]
+                            let secondCard = appState.clientPeer.cards[1]
+                            
+                            PlayingCard(suit: firstCard.suit, face: firstCard.face)
+                                .frame(width:50)
+                                .rotationEffect(Angle(degrees: -10))
+                            PlayingCard(suit: secondCard.suit, face: secondCard.face)
+                                .frame(width:50)
+                                .rotationEffect(Angle(degrees: 10))
+                        } else {
+                            Text("Not enough cards")
+                        }
+                        
+                    }
+                    .offset(y:100)
+                }
+            }
             
             Spacer()
             VStack {
                 HStack {
-                    if appState.clientPeer.cards.count >= 2 {
-                                  let firstCard = appState.clientPeer.cards[0]
-                                  let secondCard = appState.clientPeer.cards[1]
-
-                        PlayingCard(suit: firstCard.suit, face: firstCard.face)
-                        PlayingCard(suit: secondCard.suit, face: secondCard.face)
-                              } else {
-                                  Text("Not enough cards")
-                              }
-                    
-                }
-                HStack {
                     Button {
                         showBetSheet = true
-//                        appState.gameController?.bet()
                     } label: {
                         Text("Bet")
+                            .padding()
+                            .background(Color("OutsetBackground"))
                     }
                     
                     Button {
-                        appState.gameController?.check()
+                        // check implementation
+                        if(isCheckValid()){
+                            // bets the difference between the current highest bet and the current peer's bet
+                            appState.gameController?.bet(value: appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet)
+                        }else{
+                            print("Poor person detected...") // poor person detected
+                        }
+
                     } label: {
                         Text("Check")
-                    }
+                            .padding()
+                            .background(Color("OutsetBackground"))
+                    }.disabled(!isCheckValid()) // disables button if check is not valid
                     Button {
                         appState.gameController?.fold()
                     } label: {
                         Text("Fold")
+                            .padding()
+                            .background(Color("OutsetBackground"))
                     }
                 }.disabled(!isActivePeer())
+                    .padding(.bottom, 30)
                 
             }
             .padding()
             
-            
-            Spacer()
-            
-            Button {
-                appState.gameController?.endGame()
-            } label: {
-                Text("END GAME")
-            }
         }
         .withBackground()
         .sheet(isPresented: $showBetSheet) {
             NumericInputView(numericInput: $betInput)
         }
+
     }
 }
 
@@ -89,7 +115,8 @@ struct NumericInputView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var appState : AppState
     @FocusState private var isInputFocused: Bool
-    
+    @State private var showToast = false
+    @State private var toastErrorType: ToastView.ToastErrorType = .zeroBet
     
     var body: some View {
         VStack {
@@ -118,23 +145,43 @@ struct NumericInputView: View {
                 isInputFocused = true
             }
         }
+        .toastView(toastErrorType: toastErrorType, shown: $showToast)
     }
     
     
     func isBetValid() -> Bool{
         if let bet = Int(numericInput) {
-            if bet == 0 || bet < appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet || bet > appState.connectedPeers[appState.activePeerIndex].money {
+            if bet == 0 {
+                toastErrorType = .zeroBet
+                print("Zero bet detected")
+                showToast = true
                 return false
             }
+            if bet < appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet{
+                toastErrorType = .lowBet
+                print("Low bet detected")
+                showToast = true
+                return false
+            }
+            if bet > appState.connectedPeers[appState.activePeerIndex].money {
+                toastErrorType = .exceedFunds
+                print("Poor person detected")
+                showToast = true
+                return false
+            }
+            showToast = false
             return true
         }
         else {
+            showToast = false
             return false
         }
       
     }
+    
+    
 }
 
-#Preview {
-    PlayGameView().environmentObject(AppState())
-}
+//#Preview {
+//    PlayGameView().environmentObject(AppState())
+//}

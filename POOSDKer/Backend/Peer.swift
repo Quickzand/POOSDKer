@@ -21,6 +21,9 @@ struct Peer: Identifiable, Codable {
     
     var cards : [CardModel]
     
+    var prevBet : Int = 0
+    
+    var waiting : Bool = false
     
     var mcPeerID: MCPeerID?
 
@@ -46,6 +49,8 @@ struct Peer: Identifiable, Codable {
         self.bet = 0 
         self.isFolded = false
         self.cards = []
+        self.prevBet = 0
+        self.waiting = true
     }
 }
 
