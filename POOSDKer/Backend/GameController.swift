@@ -90,21 +90,43 @@ class GameController {
         
         
         //self.appState.networkingController?.broadcastUpdateCommunityCards()
-        
-        appState.activePeerIndex = appState.dealerButtonIndex + 3
+        if appState.connectedPeers.count == 1 {
+            appState.activePeerIndex = appState.dealerButtonIndex + 0
+        }
+        if appState.connectedPeers.count == 2 {
+            appState.activePeerIndex = appState.dealerButtonIndex + 1
+            if appState.activePeerIndex >= appState.connectedPeers.count {
+                appState.activePeerIndex = 0
+            }
+        }
+        if appState.connectedPeers.count == 3 {
+            appState.activePeerIndex = appState.dealerButtonIndex + 2
+            if appState.activePeerIndex >= appState.connectedPeers.count {
+                appState.activePeerIndex = 0
+            }
+        }
+        else {
+            appState.activePeerIndex = appState.dealerButtonIndex + 3
+            if appState.activePeerIndex >= appState.connectedPeers.count {
+                appState.activePeerIndex = 0
+            }
+        }
     }
     
     // playing the pre round true if completed false if not
     func matchingBetsCheck() -> Bool {
         // check if current player matches the prevPlayer bet
+        if appState.connectedPeers.count == 1 {
+            return true
+        }
         var index = activePeerIndex - 1
         if index < 0 {
-            index = activePeerIndex - 1
+            index = activePeerIndex
         }
         
         while true {
             if index < 0 {
-                index = activePeerIndex - 1
+                index = activePeerIndex
             }
             // all players have matching bets
             if index == activePeerIndex{
@@ -149,20 +171,29 @@ class GameController {
             return;
         }
         
+        
         activePeer.bet += value
+        
         activePeer.money -= value
+        
         appState.networkingController?.broadcastUpdatePeerBet()
+        
         appState.networkingController?.broadcastUpdatePeerMoney()
         
+        
         print("\(activePeer.displayName) \t Is Checking...")
+        
        
         
         self.incrementActivePeer()
         
+        
         appState.triggerViewUpdate.toggle()
         
         
+        
         networkingController.broadcastUpdateGameState()
+        
     }
     
     
@@ -225,10 +256,12 @@ class GameController {
     }
     func incrementActivePeer() {
         var startingPeerIndex = self.activePeerIndex
+        
         self.activePeerIndex += 1 ;
         if activePeerIndex >= appState.connectedPeers.count {
             activePeerIndex = 0;
         }
+        
         while(activePeer.isFolded) {
             if(activePeerIndex == startingPeerIndex) {
 //                MARK: CODE FOR ending round since everyhone else is folded
@@ -240,10 +273,12 @@ class GameController {
             self.activePeerIndex += 1;
         }
         
+        
         // this checks if every player bets match
         if self.matchingBetsCheck() {
             roundIndex += 1
         }
+        
         
     }
     
