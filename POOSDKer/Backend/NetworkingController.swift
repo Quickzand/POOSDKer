@@ -195,7 +195,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         case .shareConnectedPeerList:
             // Prepare the list of peers to be shared
             let peersToSend = appState.connectedPeers.map {
-                ["id": $0.id, "displayName": $0.displayName, "playerColor": $0.playerColor, "money": $0.money, "bet": $0.bet, "isFolded": $0.isFolded, "cards": $0.cards]
+                ["id": $0.id, "displayName": $0.displayName, "playerIcon": $0.playerIcon ,"playerColor": $0.playerColor, "money": $0.money, "bet": $0.bet, "isFolded": $0.isFolded, "cards": $0.cards]
             }
             broadcastData["peers"] = peersToSend
             print("Sharing peer list...")
