@@ -94,12 +94,18 @@ class GameController {
             appState.activePeerIndex = appState.dealerButtonIndex + 0
         }
         if appState.connectedPeers.count == 2 {
-            appState.activePeerIndex = appState.dealerButtonIndex + 1
+            appState.connectedPeers[appState.dealerButtonIndex + 1].bet = 2
+            appState.connectedPeers[appState.dealerButtonIndex + 1].money -= 2
+            appState.activePeerIndex = appState.dealerButtonIndex
             if appState.activePeerIndex >= appState.connectedPeers.count {
                 appState.activePeerIndex = 0
             }
         }
         if appState.connectedPeers.count == 3 {
+            appState.connectedPeers[appState.dealerButtonIndex + 1].bet = 1
+            appState.connectedPeers[appState.dealerButtonIndex + 1].money -= 1
+            appState.connectedPeers[appState.dealerButtonIndex + 2].bet = 2
+            appState.connectedPeers[appState.dealerButtonIndex + 2].money -= 2
             appState.activePeerIndex = appState.dealerButtonIndex + 2
             if appState.activePeerIndex >= appState.connectedPeers.count {
                 appState.activePeerIndex = 0
@@ -107,6 +113,10 @@ class GameController {
         }
         else {
             appState.activePeerIndex = appState.dealerButtonIndex + 3
+            appState.connectedPeers[appState.dealerButtonIndex + 1].bet = 1
+            appState.connectedPeers[appState.dealerButtonIndex + 1].money -= 1
+            appState.connectedPeers[appState.dealerButtonIndex + 2].bet = 2
+            appState.connectedPeers[appState.dealerButtonIndex + 2].money -= 2
             if appState.activePeerIndex >= appState.connectedPeers.count {
                 appState.activePeerIndex = 0
             }
@@ -369,6 +379,38 @@ class GameController {
         self.cardDeck = Deck()
         self.cardDeck.shuffle()
         self.distributeCards()
+        
+        // do the blinds
+        if appState.connectedPeers.count == 2 {
+            if appState.dealerButtonIndex == appState.connectedPeers.count - 1 {
+                appState.connectedPeers[0].bet = 2
+                appState.connectedPeers[0].money -= 2
+            }
+            else{
+                appState.connectedPeers[appState.dealerButtonIndex + 1].bet = 2
+                appState.connectedPeers[appState.dealerButtonIndex + 1].money -= 2
+            }
+        }
+        else {
+            if appState.dealerButtonIndex == appState.connectedPeers.count - 1 {
+                appState.connectedPeers[0].bet = 1
+                appState.connectedPeers[0].money -= 1
+                appState.connectedPeers[1].bet = 2
+                appState.connectedPeers[1].money -= 2
+            }
+            else if appState.dealerButtonIndex == appState.connectedPeers.count - 2 {
+                appState.connectedPeers[appState.connectedPeers.count - 1].bet = 1
+                appState.connectedPeers[appState.connectedPeers.count - 1].money -= 1
+                appState.connectedPeers[0].bet = 2
+                appState.connectedPeers[0].money -= 2
+            }
+            else{
+                appState.connectedPeers[appState.dealerButtonIndex + 1].bet = 1
+                appState.connectedPeers[appState.dealerButtonIndex + 1].money -= 1
+                appState.connectedPeers[appState.dealerButtonIndex + 2].bet = 2
+                appState.connectedPeers[appState.dealerButtonIndex + 2].money -= 2
+            }
+        }
     }
 }
 
