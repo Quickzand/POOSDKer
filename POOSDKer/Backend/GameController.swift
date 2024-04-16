@@ -125,7 +125,7 @@ class GameController {
         }
         
         while true {
-            if activePeerIndex >= appState.connectedPeers.count {
+            if activePeerIndex > appState.connectedPeers.count {
                 activePeerIndex = 0;
             }
             if index < 0 {
@@ -284,11 +284,12 @@ class GameController {
     }
     func incrementActivePeer() {
         self.activePeerIndex += 1 ;
-        let startingPeerIndex = self.activePeerIndex
-        
         if activePeerIndex >= appState.connectedPeers.count {
             activePeerIndex = 0;
         }
+        let startingPeerIndex = self.activePeerIndex
+        
+
         while(activePeer.isFolded) {
             if(activePeerIndex == startingPeerIndex) {
 //                MARK: CODE FOR ending round since everyhone else is folded
@@ -304,18 +305,6 @@ class GameController {
         // if a player folds then a special round is played where the remaining player wins the money
         if roundIndex == 5 {
             appState.connectedPeers[activePeerIndex].money += appState.getTotalPot()
-            
-            // now return all player attributes to original
-            for i in 0...appState.connectedPeers.count - 1 {
-                resetPlayers(index: i)
-            }
-            
-            // reset round index and move the dealer button to the next player
-            roundIndex = 0
-            dealerButtonIndex += 1
-            if dealerButtonIndex >= appState.connectedPeers.count {
-                dealerButtonIndex = 0
-            }
             
             // clear deck and create a new deck and shuffle
             self.startNewRound()
