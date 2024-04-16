@@ -50,7 +50,7 @@ struct PlayGameView: View {
                 .frame(maxWidth: .infinity)
                 .background(Color("OutsetBackground"))
                 .clipShape(RoundedRectangle(cornerRadius: 15.0))
-                .padding(.horizontal, 1)
+                .padding(.horizontal, 0.25)
                     .padding(.top, 4)
                 
                 VStack {
@@ -59,11 +59,12 @@ struct PlayGameView: View {
                 }.frame(maxWidth: .infinity)
                     .background(Color("OutsetBackground"))
                     .clipShape(RoundedRectangle(cornerRadius: 15.0))
-                    .padding(.horizontal, 1)
+                    .padding(.horizontal, 0.25)
                         .padding(.top, 4)
                     
 
             }
+            .padding(.top, 5)
       
             ZStack {
                 TableView()
