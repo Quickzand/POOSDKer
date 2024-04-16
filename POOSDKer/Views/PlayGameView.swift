@@ -156,6 +156,7 @@ struct NumericInputView: View {
                 Spacer()
                 Button("Bet!") {
                     if isBetValid() {
+                        print("++ \(appState.activePeerIndex)")
                         appState.gameController?.bet(value: Int(numericInput) ?? 0)
                         numericInput = ""
                         presentationMode.wrappedValue.dismiss()
@@ -236,6 +237,7 @@ struct NumericInputView: View {
                 showToast = true
                 return false
             }
+            print(appState.activePeerIndex)
             if bet < appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet{
                 toastErrorType = .lowBet
                 print("Low bet detected")
