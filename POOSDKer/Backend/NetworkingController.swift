@@ -77,7 +77,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         self.serviceAdvertiser = MCNearbyServiceAdvertiser(peer: appState.peerID, discoveryInfo: discoveryInfo, serviceType: serviceType)
         self.serviceAdvertiser.delegate = self
         appState.connectedPeers = []
-        appState.connectedPeers.append(Peer(id: appState.UID, displayName: appState.settings.displayName, playerColor: appState.settings.playerColor, mcPeerID:appState.peerID))
+        appState.connectedPeers.append(Peer(id: appState.UID, displayName: appState.settings.displayName, playerColor: appState.settings.playerColor, playerIcon: appState.settings.playerIcon, mcPeerID:appState.peerID))
         appState.hostPeer = appState.connectedPeers[0]
         serviceAdvertiser.startAdvertisingPeer()
         
@@ -104,7 +104,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     
     
     func requestToJoinHost(hostPeer: Peer) {
-        let infoToSend = ["displayName": appState.settings.displayName, "id": appState.UID, "playerColor": appState.settings.playerColor]
+        let infoToSend = ["displayName": appState.settings.displayName, "id": appState.UID, "playerColor": appState.settings.playerColor, "playerIcon": appState.settings.playerIcon]
         if let peerID = hostPeer.mcPeerID {
             if let context = try? JSONEncoder().encode(infoToSend) {
                 serviceBrowser.invitePeer(peerID, to: mcSession, withContext: context, timeout: 30)
@@ -125,9 +125,9 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
         if let context = context, let receivedInfo = try? JSONDecoder().decode([String: String].self, from: context) {
             // Now you have the additional info
-            if let displayName = receivedInfo["displayName"], let uniqueID = receivedInfo["id"], let playerColor = receivedInfo["playerColor"] {
-                self.appState.connectedPeers.append(Peer(id: uniqueID, displayName: displayName, playerColor: playerColor, mcPeerID: peerID))
-                print("Connecting user with name: " + displayName)
+            if let displayName = receivedInfo["displayName"], let uniqueID = receivedInfo["id"], let playerColor = receivedInfo["playerColor"], let playerIcon = receivedInfo["playerIcon"] {
+                self.appState.connectedPeers.append(Peer(id: uniqueID, displayName: displayName, playerColor: playerColor, playerIcon: playerIcon, mcPeerID: peerID))
+                print("Connecting user with name: " + displayName + " and icon: " + playerIcon)
             }
         }
         
@@ -195,7 +195,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         case .shareConnectedPeerList:
             // Prepare the list of peers to be shared
             let peersToSend = appState.connectedPeers.map {
-                ["id": $0.id, "displayName": $0.displayName, "playerColor": $0.playerColor, "money": $0.money, "bet": $0.bet, "isFolded": $0.isFolded, "cards": $0.cards]
+                ["id": $0.id, "displayName": $0.displayName, "playerIcon": $0.playerIcon ,"playerColor": $0.playerColor, "money": $0.money, "bet": $0.bet, "isFolded": $0.isFolded, "cards": $0.cards]
             }
             broadcastData["peers"] = peersToSend
             print("Sharing peer list...")
@@ -261,13 +261,14 @@ extension NetworkingController : MCNearbyServiceBrowserDelegate {
             let displayName = info["displayName"] ?? "Unknown"
             let hostID = info["hostID"] ?? "UnknownID"
             let playerColor = info["playerColor"] ?? "UnknownID"
+            let playerIcon = info["playerIcon"] ?? "UnknownIcon"
             
             print("Discovered a peer: \(displayName) with ID: \(hostID)")
             if(!self.appState.discoveredPeers.contains(where: {tempPeer in
                 return tempPeer.id == hostID
             })) {
                 print("Discovered host ")
-                self.appState.discoveredPeers.append(Peer(id: hostID, displayName: displayName, playerColor: playerColor, mcPeerID: peerID))
+                self.appState.discoveredPeers.append(Peer(id: hostID, displayName: displayName, playerColor: playerColor, playerIcon: playerIcon, mcPeerID: peerID))
             }
             
         }

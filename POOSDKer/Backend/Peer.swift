@@ -12,6 +12,7 @@ struct Peer: Identifiable, Codable, Equatable {
     var id: String // Use a unique identifier that you can match with MCPeerID.displayName
     var displayName: String
     var playerColor : String
+    var playerIcon: String
     
     var money : Int
     var bet : Int
@@ -32,6 +33,7 @@ struct Peer: Identifiable, Codable, Equatable {
         case id
         case displayName
         case playerColor
+        case playerIcon
         case money
         case bet
         case isFolded
@@ -40,10 +42,11 @@ struct Peer: Identifiable, Codable, Equatable {
     
     
     // Initialize with MCPeerID optionally
-    init(id: String, displayName: String, playerColor: String , mcPeerID: MCPeerID? = nil) {
+    init(id: String, displayName: String, playerColor: String , playerIcon: String, mcPeerID: MCPeerID? = nil) {
         self.id = id
         self.displayName = displayName
         self.playerColor = playerColor
+        self.playerIcon = playerIcon
         self.mcPeerID = mcPeerID
         self.money = 0
         self.bet = 0 
