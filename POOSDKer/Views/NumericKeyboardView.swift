@@ -90,23 +90,8 @@ struct NumericInputView: View {
                 }
                 
                 // Cancel and Delete buttons
-                HStack {
-                    Button("Cancel") {
-                        shown = false
-                    }
-                    .padding()
-                    .foregroundStyle(.black)
-                    .font(.system(size:40))
-                    Spacer()
-                    Button("Delete") {
-                        if !numericInput.isEmpty {
-                            numericInput.removeLast()
-                        }
-                    }
-                    .padding()
-                    .foregroundStyle(.black)
-                    .font(.system(size:40))
-                }
+                cancelAndDelete
+                
                 Spacer()
             }
             .padding()
@@ -119,6 +104,29 @@ struct NumericInputView: View {
             .toastView(toastErrorType: toastErrorType, shown: $showToast)
             .withBackground()
             .opacity(shown ? 1 : 0)
+        }
+    }
+    
+    var cancelAndDelete : some View {
+        HStack {
+            Button("Cancel") {
+                shown = false
+            }
+            .padding()
+            .foregroundStyle(.black)
+            .font(.system(size:40))
+            Spacer()
+            Button {
+                if !numericInput.isEmpty {
+                    numericInput.removeLast()
+                }
+            } label:  {
+                Image(systemName: "delete.left")
+            }
+            
+            .padding()
+            .foregroundStyle(.black)
+            .font(.system(size:40))
         }
     }
     
