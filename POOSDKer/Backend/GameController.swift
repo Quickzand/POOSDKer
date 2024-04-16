@@ -93,7 +93,7 @@ class GameController {
         if appState.connectedPeers.count == 1 {
             appState.activePeerIndex = appState.dealerButtonIndex + 0
         }
-        if appState.connectedPeers.count == 2 {
+        else if appState.connectedPeers.count == 2 {
             appState.connectedPeers[appState.dealerButtonIndex + 1].bet = 2
             appState.connectedPeers[appState.dealerButtonIndex + 1].money -= 2
             appState.activePeerIndex = appState.dealerButtonIndex
@@ -101,7 +101,7 @@ class GameController {
                 appState.activePeerIndex = 0
             }
         }
-        if appState.connectedPeers.count == 3 {
+        else if appState.connectedPeers.count == 3 {
             appState.connectedPeers[appState.dealerButtonIndex + 1].bet = 1
             appState.connectedPeers[appState.dealerButtonIndex + 1].money -= 1
             appState.connectedPeers[appState.dealerButtonIndex + 2].bet = 2
