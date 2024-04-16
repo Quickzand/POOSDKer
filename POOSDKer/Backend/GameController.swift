@@ -294,6 +294,10 @@ class GameController {
             self.appState.communityCards.append(cardDeck.draw())
             self.appState.networkingController?.broadcastUpdateCommunityCards()
         }
+        
+        if activePeerIndex >= appState.connectedPeers.count {
+            activePeerIndex = 0
+        }
     }
     func incrementActivePeer() {
         self.activePeerIndex += 1 ;
@@ -309,10 +313,11 @@ class GameController {
                 roundIndex = 5
                 break;
             }
+       
+            self.activePeerIndex += 1;
             if activePeerIndex >= appState.connectedPeers.count {
                 activePeerIndex = 0;
             }
-            self.activePeerIndex += 1;
         }
         
         // if a player folds then a special round is played where the remaining player wins the money
