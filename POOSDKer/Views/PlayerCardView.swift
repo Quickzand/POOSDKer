@@ -33,19 +33,22 @@ struct PlayerCardView : View{
                     Circle()
                         .frame(width: 25, height:25)
                         .foregroundStyle(Color(hex: player.playerColor))
-                    
-                    
-                    if appState.hostPeer?.id == player.id {
+                    if(player.playerIcon != ""){
+                            // textbox with string PlayerIcon
+                            Text(player.playerIcon)
+                                .font(.system(size: 12))
+                                .fontWeight(.bold)
+                    } else {
                         Image(systemName: "crown.fill")
                             .foregroundStyle(Color.secondary)
                     }
+                    
                 }
                 
                 Text(player.displayName)
                     .foregroundStyle(appState.gameController?.activePeer.id == player.id ? (Color(hex: player.playerColor)) : .black)
                     .font(.system(size: 14))
                     .fontWeight(.bold)
-                    
                 
                 Spacer()
             }
