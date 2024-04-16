@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct POOSDKerApp: App {
+    struct POOSDKerApp: App {
     @StateObject private var appState = AppState()
     
     var body: some Scene {

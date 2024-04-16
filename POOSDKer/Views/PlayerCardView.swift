@@ -13,14 +13,17 @@ struct PlayerCardView : View{
     @EnvironmentObject var appState : AppState
     var index : Int
     
+    @Binding var displayedPeersList : [Peer]
+    
     func isActivePeer() -> Bool {
-        return appState.gameController?.activePeer.id ==   appState.connectedPeers[index].id
+        return appState.gameController?.activePeer.id ==   displayedPeersList[index].id
     }
     
     
     private var playerView: some View {
-           guard appState.connectedPeers.indices.contains(index) else { return AnyView(EmptyView()) }
-           let player = appState.connectedPeers[index]
+        print(displayedPeersList)
+           guard displayedPeersList.indices.contains(index) else { return AnyView(EmptyView()) }
+           let player = displayedPeersList[index]
 
            return AnyView(
             VStack {
@@ -92,6 +95,6 @@ struct PlayerCardView : View{
        }
 }
 
-#Preview {
-    PlayerCardView(index: 0).environmentObject(AppState())
-}
+//#Preview {
+//    PlayerCardView(index: 0).environmentObject(AppState())
+//}

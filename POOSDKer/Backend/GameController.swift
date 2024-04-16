@@ -119,6 +119,9 @@ class GameController {
             return true
         }
         // check if current player matches the prevPlayer bet
+        if appState.connectedPeers.count == 1 {
+            return true
+        }
         var index = activePeerIndex - 1
         if index < 0 {
             index = activePeerIndex
@@ -183,6 +186,7 @@ class GameController {
     func bet(value : Int) {
         if !self.appState.isHost {
             activePeer.bet = value
+            activePeer.totalBets = value
             self.appState.networkingController?.sendBetToHost()
             return;
         }
@@ -207,19 +211,28 @@ class GameController {
         }
         
         activePeer.bet += value
+        activePeer.totalBets += value
+
         activePeer.money -= value
+        
         appState.networkingController?.broadcastUpdatePeerBet()
+        
         appState.networkingController?.broadcastUpdatePeerMoney()
         
+        
         print("\(activePeer.displayName) \t Is Checking...")
+        
        
         
         self.incrementActivePeer()
         
+        
         appState.triggerViewUpdate.toggle()
         
         
+        
         networkingController.broadcastUpdateGameState()
+        
     }
     
     

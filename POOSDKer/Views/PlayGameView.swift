@@ -19,6 +19,7 @@ struct PlayGameView: View {
 
     func isCheckValid() -> Bool{
         guard appState.connectedPeers.indices.contains(appState.activePeerIndex) else { return false}
+        return true
         // check if MaxBet - currentBet > UserMoney -> disable check button
         if(appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet
            > appState.connectedPeers[appState.activePeerIndex].money){
@@ -28,6 +29,7 @@ struct PlayGameView: View {
     }
         
     var body: some View {
+
         VStack {
             HStack {
                 ForEach(appState.communityCards, id: \.self) {cardModel in
@@ -37,7 +39,31 @@ struct PlayGameView: View {
                     
                 }
             }
-//            .padding(.top, 250)
+            .frame(height:125)
+            .padding(.top, 75)
+            HStack {
+                VStack {
+                    Text("Balance")
+                    Text("$\(appState.clientPeer.money)")
+                }
+                .frame(maxWidth: .infinity)
+                .background(Color("OutsetBackground"))
+                .clipShape(RoundedRectangle(cornerRadius: 15.0))
+                .padding(.horizontal, 1)
+                    .padding(.top, 4)
+                
+                VStack {
+                    Text("Pot")
+                    Text("$\(appState.getTotalPot())")
+                }.frame(maxWidth: .infinity)
+                    .background(Color("OutsetBackground"))
+                    .clipShape(RoundedRectangle(cornerRadius: 15.0))
+                    .padding(.horizontal, 1)
+                        .padding(.top, 4)
+                    
+
+            }
+      
             ZStack {
                 TableView()
                 VStack {
@@ -105,6 +131,7 @@ struct PlayGameView: View {
         .sheet(isPresented: $showBetSheet) {
             NumericInputView(numericInput: $betInput)
         }
+
     }
 }
 
@@ -113,7 +140,8 @@ struct NumericInputView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var appState : AppState
     @FocusState private var isInputFocused: Bool
-    
+    @State private var showToast = false
+    @State private var toastErrorType: ToastView.ToastErrorType = .zeroBet
     
     var body: some View {
         VStack {
@@ -142,17 +170,35 @@ struct NumericInputView: View {
                 isInputFocused = true
             }
         }
+        .toastView(toastErrorType: toastErrorType, shown: $showToast)
     }
     
     
     func isBetValid() -> Bool{
         if let bet = Int(numericInput) {
-            if bet == 0 || bet < appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet || bet > appState.connectedPeers[appState.activePeerIndex].money {
+            if bet == 0 {
+                toastErrorType = .zeroBet
+                print("Zero bet detected")
+                showToast = true
                 return false
             }
+            if bet < appState.currentHighestBet - appState.connectedPeers[appState.activePeerIndex].bet{
+                toastErrorType = .lowBet
+                print("Low bet detected")
+                showToast = true
+                return false
+            }
+            if bet > appState.connectedPeers[appState.activePeerIndex].money {
+                toastErrorType = .exceedFunds
+                print("Poor person detected")
+                showToast = true
+                return false
+            }
+            showToast = false
             return true
         }
         else {
+            showToast = false
             return false
         }
       

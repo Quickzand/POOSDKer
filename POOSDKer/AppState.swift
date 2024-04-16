@@ -83,6 +83,18 @@ class AppState : ObservableObject {
         }
     }
     
+    func getGameWinner() -> Peer {
+        var currentHighestBalance = 0
+        var richestPeer = connectedPeers[0]
+        connectedPeers.forEach { Peer in
+            if Peer.money > currentHighestBalance {
+                currentHighestBalance = Peer.money
+                richestPeer = Peer
+            }
+        }
+        return richestPeer
+    }
+    
     var currentHighestBet : Int {
         var currentHighest = 0
         connectedPeers.forEach {peer in
@@ -101,6 +113,15 @@ class AppState : ObservableObject {
         }
         return total
     }
+    
+    func getTotalPot() -> Int {
+        var total = 0;
+        connectedPeers.forEach {peer in
+            total += peer.bet
+        }
+        return total
+    }
+    
     
     
     // MARK: ALL PROPERTIES RELATED TO GAMEPLAY

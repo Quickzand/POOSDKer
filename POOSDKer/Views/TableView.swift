@@ -10,24 +10,25 @@ import SwiftUI
 struct TableView: View {
     @EnvironmentObject var appState: AppState
     
-    let radius: CGFloat = 150 // Distance from the center circle
+    @State private var displayedPeersList : [Peer] = []
+    
     
     var body: some View {
         VStack {
             HStack {
-                PlayerCardView(index:0)
+                PlayerCardView(index:0, displayedPeersList: $displayedPeersList)
             }
             Spacer()
             HStack {
-                PlayerCardView(index:1)
+                PlayerCardView(index:1, displayedPeersList: $displayedPeersList)
                 Spacer()
-                PlayerCardView(index:2)
+                PlayerCardView(index:2, displayedPeersList: $displayedPeersList)
             }
             Spacer()
             HStack {
-                PlayerCardView(index:3)
+                PlayerCardView(index:3, displayedPeersList: $displayedPeersList)
                 Spacer()
-                PlayerCardView(index:4)
+                PlayerCardView(index:4, displayedPeersList: $displayedPeersList)
             }
             
         }
@@ -37,6 +38,32 @@ struct TableView: View {
                 .foregroundStyle(.brown)
         }
         .frame(minWidth: 300, minHeight: 500)
+        .onAppear {
+            if appState.isInGame {
+                displayedPeersList = appState.connectedPeers.filter({peer in
+                    if peer.id == appState.clientPeer.id {
+                        return false
+                    }
+                    return true
+                })
+            }
+            else {
+                displayedPeersList = appState.connectedPeers
+            }
+        }
+        .onChange(of: appState.connectedPeers) {
+            if appState.isInGame {
+                displayedPeersList = appState.connectedPeers.filter({peer in
+                    if peer.id == appState.clientPeer.id {
+                        return false
+                    }
+                    return true
+                })
+            }
+            else {
+                displayedPeersList = appState.connectedPeers
+            }
+        }
     }
 }
 
