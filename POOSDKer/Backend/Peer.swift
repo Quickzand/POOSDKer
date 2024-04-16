@@ -27,6 +27,15 @@ struct Peer: Identifiable, Codable, Equatable {
     var waiting : Bool = false
     
     var mcPeerID: MCPeerID?
+    
+    
+    func isOut() -> Bool {
+        if money == 0 {
+            return true
+        }
+        
+        return false
+    }
 
     // Since MCPeerID is not Codable, we exclude it from the encoding process
     enum CodingKeys: String, CodingKey {
