@@ -13,7 +13,8 @@ struct PlayGameView: View {
     func isActivePeer() -> Bool {
         return appState.gameController?.activePeer.id ==  appState.UID
     }
-    
+    @State private var numericInput: String = ""
+    @State private var isInputFocused: Bool = false
     @State private var betInput = ""
     @State private var showBetSheet = false
 
@@ -135,6 +136,8 @@ struct PlayGameView: View {
     }
 }
 
+
+
 struct NumericInputView: View {
     @Binding var numericInput: String
     @Environment(\.presentationMode) var presentationMode
@@ -144,35 +147,86 @@ struct NumericInputView: View {
     @State private var toastErrorType: ToastView.ToastErrorType = .zeroBet
     
     var body: some View {
-        VStack {
-            TextField("Enter number", text: $numericInput)
-                           .keyboardType(.numberPad)
-                           .focused($isInputFocused)
-                           .padding()
-                       
-            
-            Button("Cancel") {
-                presentationMode.wrappedValue.dismiss()
+        VStack(spacing: 20) {
+            Spacer()
+            HStack {
+                Spacer()
+                Text("Bet Amount: \(numericInput)")
+                    .frame(minWidth: 100, alignment: .trailing)
+                Spacer()
+                Button("Bet!") {
+                    if isBetValid() {
+                        appState.gameController?.bet(value: Int(numericInput) ?? 0)
+                        numericInput = ""
+                        presentationMode.wrappedValue.dismiss()
+                    } else {
+                        print("Invalid bet...")
+                    }
+                }
+                .padding(.horizontal)
             }
-            Button("Done") {
-                if(isBetValid()) {
-                    appState.gameController?.bet(value: Int(numericInput) ?? 0)
+
+            // Numeric keypad layout for numbers 1 to 9
+            VStack(spacing: 10) {
+                ForEach(0..<3) { row in
+                    HStack(spacing: 10) {
+                        ForEach(1..<4) { column in
+                            Button("\(row * 3 + column)") {
+                                numericInput += "\(row * 3 + column)"
+                            }
+                            .frame(width: 60, height: 60) // Standard size for all buttons
+                            .background(Color.gray.opacity(0.2)) // Button color
+                            .cornerRadius(10) // Rounded corners
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.green, lineWidth: 2) // Border details
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Button for number 0, centered
+            HStack {
+                Spacer()
+                Button("0") {
+                    numericInput += "0"
+                }
+                .frame(width: 60, height: 60)
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.green, lineWidth: 2)
+                )
+                Spacer()
+            }
+            
+            // Cancel and Delete buttons
+            HStack {
+                Button("Cancel") {
                     presentationMode.wrappedValue.dismiss()
                 }
-                else {
-                    print("Invalid bet...")
+                .padding()
+                Spacer()
+                Button("Delete") {
+                    if !numericInput.isEmpty {
+                        numericInput.removeLast()
+                    }
                 }
+                .padding()
             }
+            Spacer()
         }
         .padding()
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // Adjust the delay as needed
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 isInputFocused = true
             }
         }
         .toastView(toastErrorType: toastErrorType, shown: $showToast)
     }
-    
+
     
     func isBetValid() -> Bool{
         if let bet = Int(numericInput) {
