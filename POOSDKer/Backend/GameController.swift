@@ -125,6 +125,9 @@ class GameController {
         }
         
         while true {
+            if activePeerIndex >= appState.connectedPeers.count {
+                activePeerIndex = 0;
+            }
             if index < 0 {
                 index = activePeerIndex
             }
@@ -137,7 +140,7 @@ class GameController {
                 index -= 1
             }
             // if bets match continue until a bet doesn't match
-            else if appState.connectedPeers[index].prevBet == appState.connectedPeers[activePeerIndex].prevBet {
+            else if (appState.connectedPeers[index].prevBet == appState.connectedPeers[activePeerIndex].prevBet) {
                 index -= 1
             }
             // breaks and returns false when we find a bet that doesnt match
@@ -280,8 +283,9 @@ class GameController {
         }
     }
     func incrementActivePeer() {
-        var startingPeerIndex = self.activePeerIndex
         self.activePeerIndex += 1 ;
+        let startingPeerIndex = self.activePeerIndex
+        
         if activePeerIndex >= appState.connectedPeers.count {
             activePeerIndex = 0;
         }
@@ -314,9 +318,7 @@ class GameController {
             }
             
             // clear deck and create a new deck and shuffle
-            appState.communityCards = []
-            self.cardDeck = Deck()
-            self.cardDeck.shuffle()
+            self.startNewRound()
         }
         
         // this checks if every player bets match
@@ -336,22 +338,8 @@ class GameController {
             var index = appState.connectedPeers.firstIndex(where: {$0.id == rankedPlayer[0].id}) ?? 0
             appState.connectedPeers[index].money += appState.getTotalPot()
             
-            // now return all player attributes to original
-            for i in 0...appState.connectedPeers.count - 1 {
-                resetPlayers(index: i)
-            }
-            
-            // reset round index and move the dealer button to the next player
-            roundIndex = 0
-            dealerButtonIndex += 1
-            if dealerButtonIndex >= appState.connectedPeers.count {
-                dealerButtonIndex = 0
-            }
-            
             // clear deck and create a new deck and shuffle
-            appState.communityCards = []
-            self.cardDeck = Deck()
-            self.cardDeck.shuffle()
+            self.startNewRound()
         }
     }
     
@@ -361,11 +349,37 @@ class GameController {
         appState.connectedPeers[index].cards = []
         appState.connectedPeers[index].prevBet = 0
         appState.connectedPeers[index].waiting = true
+        
+        self.appState.networkingController?.broadcastUpdatePeerBet()
+        self.appState.networkingController?.broadcastUpdatePlayerFoldState()
     }
     
     func endGame() {
         self.activePeerIndex = 0
         self.appState.networkingController?.broadcastEndGame()
+    }
+    
+    
+    func startNewRound() {
+        
+        // now return all player attributes to original
+        for i in 0...appState.connectedPeers.count - 1 {
+            resetPlayers(index: i)
+        }
+        
+        // reset round index and move the dealer button to the next player
+        roundIndex = 0
+        dealerButtonIndex += 1
+        if dealerButtonIndex >= appState.connectedPeers.count {
+            dealerButtonIndex = 0
+        }
+        
+        
+        appState.communityCards = []
+        self.appState.networkingController?.broadcastUpdateCommunityCards()
+        self.cardDeck = Deck()
+        self.cardDeck.shuffle()
+        self.distributeCards()
     }
 }
 
