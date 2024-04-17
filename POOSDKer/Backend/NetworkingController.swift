@@ -346,7 +346,6 @@ extension NetworkingController : MCSessionDelegate {
                     
                 case BroadcastCommandType.updatePlayerMoney.rawValue:
                     print("Updating player money...")
-                    print(decodedData)
                     if let peerID = decodedData.peerID, let money = decodedData.money {
                         if let index = self.appState.connectedPeers.firstIndex(where: { $0.id == peerID }) {
                             self.appState.connectedPeers[index].money = money
@@ -359,7 +358,6 @@ extension NetworkingController : MCSessionDelegate {
                     
                 case BroadcastCommandType.updatePlayerBet.rawValue:
                     print("Updating player bet...")
-                    print(decodedData)
                     if let peerID = decodedData.peerID, let bet = decodedData.bet {
                         if let index = self.appState.connectedPeers.firstIndex(where: { $0.id == peerID }) {
                             self.appState.connectedPeers[index].bet = bet
@@ -387,7 +385,6 @@ extension NetworkingController : MCSessionDelegate {
                     
                 case BroadcastCommandType.updatePlayerCards.rawValue:
                     print("Updating player cards...")
-                    print(decodedData)
                     if let peerID = decodedData.peerID, let cards = decodedData.cards {
                         if let index = self.appState.connectedPeers.firstIndex(where: { $0.id == peerID }) {
                             self.appState.connectedPeers[index].cards = cards
@@ -400,7 +397,6 @@ extension NetworkingController : MCSessionDelegate {
                     
                 case BroadcastCommandType.updateCommunityCards.rawValue:
                     print("Updating communtiy cards...")
-                    print(decodedData)
                     if let cards = decodedData.cards {
                         self.appState.communityCards = cards
                         print(self.appState.communityCards)
@@ -410,7 +406,6 @@ extension NetworkingController : MCSessionDelegate {
                     
                 case BroadcastCommandType.updateDealerButton.rawValue:
                     print("Updating dealer button...")
-                    print(decodedData)
                     if let dealerButtonIndex = decodedData.dealerButtonIndex {
                         self.appState.dealerButtonIndex = dealerButtonIndex
                         self.appState.triggerViewUpdate.toggle()
@@ -423,22 +418,20 @@ extension NetworkingController : MCSessionDelegate {
                         return;
                     }
                     print("Receiving command to check...")
-                    self.appState.gameController?.check()
+                    self.appState.gameController?.bet(value:0)
                     
                 case PeerToHostCommandType.bet.rawValue:
                     if !self.appState.isHost {
                         print("Received host command when not host... ")
                         return;
                     }
-                    print("Receiving command to check...")
+                    print("Receiving command to bet...")
                     if let bet = decodedData.bet {
                         self.appState.gameController?.bet(value: bet)
-                        print("BETTING \(bet)")
                         self.appState.triggerViewUpdate.toggle()
                     }
                     else {
                         print("Couldnt find bet in encodedData...")
-                        print(decodedData)
                     }
                     
                 case PeerToHostCommandType.fold.rawValue:

@@ -106,13 +106,9 @@ class AppState : ObservableObject {
         return currentHighest
     }
     
-    func getTotalPot() -> Int {
-        var total = 0;
-        connectedPeers.forEach {peer in
-            total += peer.bet
-        }
-        return total
-    }
+    
+    
+    var totalPot : Int = 0
     
     
     // MARK: ALL PROPERTIES RELATED TO GAMEPLAY

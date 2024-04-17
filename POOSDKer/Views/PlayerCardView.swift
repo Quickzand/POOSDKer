@@ -21,7 +21,6 @@ struct PlayerCardView : View{
     
     
     private var playerView: some View {
-        print(displayedPeersList)
            guard displayedPeersList.indices.contains(index) else { return AnyView(EmptyView()) }
            let player = displayedPeersList[index]
 
@@ -87,9 +86,10 @@ struct PlayerCardView : View{
             }
                 .frame(width: 150)
                 .padding(.all, 8)
-                .background(player.isFolded ? .black : Color("OutsetBackground"))
+                .background(Color("OutsetBackground"))
                 .border(.black, width: 1)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
+                .opacity(player.isFolded ? 0.5 : 1)
            )
        }
        

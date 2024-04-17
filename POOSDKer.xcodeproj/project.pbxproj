@@ -36,6 +36,7 @@
 		34DACA742BC3002C00F9A0EA /* Peer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DACA732BC3002C00F9A0EA /* Peer.swift */; };
 		34F998312B9346590077B62F /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F998302B9346590077B62F /* TableView.swift */; };
 		34FDDDA02BCB3FC300A57A55 /* PlayerCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FDDD9F2BCB3FC300A57A55 /* PlayerCardView.swift */; };
+		E1867E002BCE13DA0075B3F1 /* NumericKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1867DFF2BCE13DA0075B3F1 /* NumericKeyboardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +89,7 @@
 		34DACA732BC3002C00F9A0EA /* Peer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peer.swift; sourceTree = "<group>"; };
 		34F998302B9346590077B62F /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
 		34FDDD9F2BCB3FC300A57A55 /* PlayerCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerCardView.swift; sourceTree = "<group>"; };
+		E1867DFF2BCE13DA0075B3F1 /* NumericKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumericKeyboardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +201,7 @@
 			isa = PBXGroup;
 			children = (
 				34FDDD9F2BCB3FC300A57A55 /* PlayerCardView.swift */,
+				E1867DFF2BCE13DA0075B3F1 /* NumericKeyboardView.swift */,
 				347610352BCB0D0900318E8F /* ToastView.swift */,
 				34215FF22BA8E93F0006315D /* HeaderBanner.swift */,
 				34AADB5E2B9E7F4700F40FFC /* Basic Components */,
@@ -381,6 +384,7 @@
 				34C7B2912B8E62D9007DA1EB /* PlayGameView.swift in Sources */,
 				3401808A2BBFC34400143984 /* GameController.swift in Sources */,
 				34215FF32BA8E93F0006315D /* HeaderBanner.swift in Sources */,
+				E1867E002BCE13DA0075B3F1 /* NumericKeyboardView.swift in Sources */,
 				34C7B28F2B8E5E00007DA1EB /* LobbyView.swift in Sources */,
 				347610362BCB0D0900318E8F /* ToastView.swift in Sources */,
 				34017E4D2B97B45700B7FB72 /* PlayingCard.swift in Sources */,

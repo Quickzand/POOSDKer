@@ -10,7 +10,7 @@ import Foundation
 class GameController {
     var appState : AppState
     
-    var roundNumber : Int = 0
+    var handController : HandController? = nil
     
     var smallBlind = 1
     var bigBling = 2
@@ -69,10 +69,10 @@ class GameController {
     
     init(appState: AppState) {
         self.appState = appState
+        self.handController = HandController(gameController: self)
     }
     
     func startGame() {
-        
     //  Go through all peers and ensure their game values are set to inital
         appState.isInGame = true
         appState.networkingController?.broadcastCommandToPeers(broadcastCommandType: .startGame)
@@ -83,8 +83,6 @@ class GameController {
         }
         
         self.distributeCards()
-        
-        //self.appState.communityCards = [cardDeck.draw(),cardDeck.draw(),cardDeck.draw(), cardDeck.draw(),cardDeck.draw()]
         
         
         //self.appState.networkingController?.broadcastUpdateCommunityCards()
@@ -110,62 +108,7 @@ class GameController {
             }
         }
     }
-    
-    // playing the pre round true if completed false if not
-    func matchingBetsCheck() -> Bool {
-        if appState.connectedPeers.count <= 1 {
-            return true
-        }
-        // check if current player matches the prevPlayer bet
-        if appState.connectedPeers.count == 1 {
-            return true
-        }
-        var index = activePeerIndex - 1
-        if index < 0 {
-            index = activePeerIndex
-        }
-        
-        while true {
-            if activePeerIndex > appState.connectedPeers.count {
-                activePeerIndex = 0;
-            }
-            if index < 0 {
-                index = activePeerIndex
-            }
-            // all players have matching bets
-            if index == activePeerIndex{
-                return true
-            }
-            // skips folded players
-            if !appState.connectedPeers[index].isFolded {
-                index -= 1
-            }
-            // if bets match continue until a bet doesn't match
-            else if (appState.connectedPeers[index].prevBet == appState.connectedPeers[activePeerIndex].prevBet) {
-                index -= 1
-            }
-            // breaks and returns false when we find a bet that doesnt match
-            else{
-                break
-            }
-        }
-       
-        return false
-    }
-    
-    // checks if all players are ready to move onto the next round
-    func arePlayersReady() -> Bool {
-        if appState.connectedPeers.count <= 1 {
-            return true
-        }
-        for i in 0...appState.connectedPeers.count - 1 {
-            if appState.connectedPeers[i].waiting {
-                print(appState.connectedPeers[i].displayName)
-                return false
-            }
-        }
-        return true
-    }
+
     
     func distributeCards() {
         cardDeck = Deck()
@@ -175,7 +118,6 @@ class GameController {
             appState.connectedPeers[i].cards = [cardDeck.draw(), cardDeck.draw()]
             print("Giving out the cards \(appState.connectedPeers[i].cards)")
             appState.networkingController?.broadcastUpdatePlayerCards()
-            
         }
         
         activePeerIndex = 0
@@ -190,26 +132,17 @@ class GameController {
         }
         
         
-        
-
-        
-        print(value)
-        print(appState.currentHighestBet)
-        if value == appState.currentHighestBet {
-            self.appState.connectedPeers[activePeerIndex].waiting = false
-        }
-        else {
-            // when someone bets every player that is alive will now be waiting
-            for i in 0...appState.connectedPeers.count - 1{
-                if i == activePeerIndex {
-                    continue
-                }
-                appState.connectedPeers[i].waiting = true
+        print("Betting val: \(value) \t HighestBet \(appState.currentHighestBet)")
+        if value != appState.currentHighestBet {
+            for i in 0...appState.connectedPeers.count - 1 {
+                print("Restting all peer's have acted")
+                appState.connectedPeers[i].hasActed = false
             }
         }
-        
+
         activePeer.bet += value
         activePeer.totalBets += value
+        appState.totalPot += value
 
         activePeer.money -= value
         
@@ -218,11 +151,16 @@ class GameController {
         appState.networkingController?.broadcastUpdatePeerMoney()
         
         
-        print("\(activePeer.displayName) \t Is Checking...")
+  
+        
+        
+        
+        
+        print("\(activePeer.displayName) \t Is Betting...")
         
        
         
-        self.incrementActivePeer()
+        self.endTurn()
         
         
         appState.triggerViewUpdate.toggle()
@@ -233,27 +171,6 @@ class GameController {
         
     }
     
-    
-    func check() {
-        if !self.appState.isHost {
-            self.appState.networkingController?.sendCheckToHost()
-            return;
-        }
-        
-        self.appState.connectedPeers[activePeerIndex].waiting = false
-        
-        print("\(activePeer.displayName) \t Is Checking...")
-        
-        appState.connectedPeers[activePeerIndex].money -= appState.currentHighestBet - appState.connectedPeers[activePeerIndex].prevBet
-        appState.connectedPeers[activePeerIndex].prevBet = appState.currentHighestBet
-      
-        self.incrementActivePeer()
-        
-        appState.triggerViewUpdate.toggle()
-        
-        
-        networkingController.broadcastUpdateGameState()
-    }
     
     func fold() {
         if !self.appState.isHost {
@@ -266,121 +183,210 @@ class GameController {
         
         appState.networkingController?.broadcastUpdatePlayerFoldState()
         
-        self.incrementActivePeer()
+        self.endTurn()
         
         appState.triggerViewUpdate.toggle()
         networkingController.broadcastUpdateGameState()
     }
     
-    func newRoundStart() {
-        if roundIndex == 1 {
-            cardDeck.draw()
-            self.appState.communityCards.append(cardDeck.draw())
-            self.appState.communityCards.append(cardDeck.draw())
-            self.appState.communityCards.append(cardDeck.draw())
-            self.appState.networkingController?.broadcastUpdateCommunityCards()
-            appState.activePeerIndex = appState.dealerButtonIndex + 1
-        }
-        if roundIndex == 2 {
-            cardDeck.draw()
-            self.appState.communityCards.append(cardDeck.draw())
-            self.appState.networkingController?.broadcastUpdateCommunityCards()
-            appState.activePeerIndex = appState.dealerButtonIndex + 1
-        }
-        if roundIndex == 3 {
-            cardDeck.draw()
-            self.appState.communityCards.append(cardDeck.draw())
-            self.appState.networkingController?.broadcastUpdateCommunityCards()
-        }
+    
+    func endTurn() {
+        appState.connectedPeers[activePeerIndex].hasActed = true
+        handController?.determineIfHandEnded()
+        handController?.determineIfRoundEnded()
     }
+
+    func compareFinalHands() -> Int {
+        // Placeholder for the logic to compare the hands of the players who have not folded.
+        // Return the player who wins the hand.
+        let notFolded = appState.connectedPeers.filter { !$0.isFolded }
+        
+        let winner = orderPeersByHand(peers: notFolded)[0]
+        
+        let winnerIndex = appState.connectedPeers.firstIndex(where: {peer in
+            return peer.id == winner.id
+        })
+        
+        return winnerIndex ?? 0
+    }
+    
     func incrementActivePeer() {
+        var startingIndex = activePeerIndex
         self.activePeerIndex += 1 ;
         if activePeerIndex >= appState.connectedPeers.count {
             activePeerIndex = 0;
         }
-        let startingPeerIndex = self.activePeerIndex
         
-
-        while(activePeer.isFolded) {
-            if(activePeerIndex == startingPeerIndex) {
-//                MARK: CODE FOR ending round since everyhone else is folded
-                roundIndex = 5
-                break;
-            }
+        while appState.connectedPeers[self.activePeerIndex].isFolded == true {
+            self.activePeerIndex += 1 ;
             if activePeerIndex >= appState.connectedPeers.count {
                 activePeerIndex = 0;
             }
-            self.activePeerIndex += 1;
-        }
-        
-        // if a player folds then a special round is played where the remaining player wins the money
-        if roundIndex == 5 {
-            appState.connectedPeers[activePeerIndex].money += appState.getTotalPot()
-            
-            // clear deck and create a new deck and shuffle
-            self.startNewRound()
-        }
-        
-        // this checks if every player bets match
-        else if self.matchingBetsCheck() && self.arePlayersReady() {
-            roundIndex += 1
-            self.newRoundStart()
-            for i in  0...appState.connectedPeers.count - 1 {
-                appState.connectedPeers[i].waiting = true
+            if startingIndex == activePeerIndex {
+                break
             }
         }
-        if roundIndex >= 4 {
-            // determing winner and end game
-            var rankedPlayer: [Peer] = []
-            rankedPlayer = orderPeersByHand(peers: appState.connectedPeers)
-            
-            // gets the index of the sorted ranked players
-            var index = appState.connectedPeers.firstIndex(where: {$0.id == rankedPlayer[0].id}) ?? 0
-            appState.connectedPeers[index].money += appState.getTotalPot()
-            
-            // clear deck and create a new deck and shuffle
-            self.startNewRound()
-        }
+        
+        
     }
     
-    func resetPlayers(index: Int) {
-        appState.connectedPeers[index].bet = 0
-        appState.connectedPeers[index].isFolded = false
-        appState.connectedPeers[index].cards = []
-        appState.connectedPeers[index].prevBet = 0
-        appState.connectedPeers[index].waiting = true
+    func resetPlayersRound() {
+        for i in 0...appState.connectedPeers.count - 1 {
+            appState.connectedPeers[i].bet = 0
+            appState.connectedPeers[i].isFolded = false
+            appState.connectedPeers[i].prevBet = 0
+            appState.connectedPeers[i].hasActed = false
+            appState.networkingController?.broadcastUpdatePeerBet()
+            appState.networkingController?.broadcastUpdatePlayerFoldState()
+        }
         
-        self.appState.networkingController?.broadcastUpdatePeerBet()
-        self.appState.networkingController?.broadcastUpdatePlayerFoldState()
+        activePeerIndex = 0
     }
+    
+    
+    func resetPlayersHand() {
+        for i in 0...appState.connectedPeers.count - 1 {
+            appState.connectedPeers[i].bet = 0
+            appState.connectedPeers[i].isFolded = false
+            appState.connectedPeers[i].cards = [cardDeck.draw(), cardDeck.draw()]
+            appState.connectedPeers[i].prevBet = 0
+            appState.connectedPeers[i].hasActed = false
+            activePeerIndex = i
+            appState.networkingController?.broadcastUpdatePeerBet()
+            appState.networkingController?.broadcastUpdatePlayerFoldState()
+            appState.networkingController?.broadcastUpdatePlayerCards()
+        }
+        
+        
+        activePeerIndex = 0
+    }
+    
+    
+
     
     func endGame() {
         self.activePeerIndex = 0
         self.appState.networkingController?.broadcastEndGame()
     }
-    
-    
-    func startNewRound() {
-        
-        // now return all player attributes to original
-        for i in 0...appState.connectedPeers.count - 1 {
-            resetPlayers(index: i)
+}
+
+
+class HandController {
+    var gameController : GameController
+    var appState : AppState {
+        get {
+            gameController.appState
         }
-        
-        // reset round index and move the dealer button to the next player
-        roundIndex = 0
-        dealerButtonIndex += 1
-        if dealerButtonIndex >= appState.connectedPeers.count {
-            dealerButtonIndex = 0
-        }
-        
-        
-        appState.communityCards = []
-        self.appState.networkingController?.broadcastUpdateCommunityCards()
-        self.cardDeck = Deck()
-        self.cardDeck.shuffle()
-        self.distributeCards()
     }
+    
+    
+    enum Round {
+        case preFlop
+        case flop
+        case turn
+        case river
+    }
+    
+    var currentRound : Round = .preFlop
+    
+    init(gameController: GameController) {
+        self.gameController = gameController
+    }
+    
+    func startNextRound() {
+        switch currentRound {
+        case .preFlop:
+            appState.communityCards = [gameController.cardDeck.draw(), gameController.cardDeck.draw(), gameController.cardDeck.draw()]
+            currentRound = .flop
+            break
+        case .flop:
+            appState.communityCards.append(gameController.cardDeck.draw())
+            currentRound = .turn
+            break
+        case .turn:
+            appState.communityCards.append(gameController.cardDeck.draw())
+            currentRound = .river
+            break
+        case .river:
+            concludeHand()
+            startNewHand()
+            currentRound = .preFlop
+            break
+        }
+        
+        gameController.activePeerIndex = 0
+        
+        gameController.resetPlayersRound()
+        
+        
+        appState.networkingController?.broadcastUpdateCommunityCards()
+    }
+    
+//    Should go through and seee if the next round is ready to be gone to, and if so, start next round. If not, just increment active player
+    func determineIfRoundEnded() {
+        // Check if all active players have acted
+        let activePlayers = appState.connectedPeers.filter { !$0.isFolded && $0.money > 0 }
+        let allHaveActed = activePlayers.allSatisfy { $0.hasActed }
+        print("HOWDY \(allHaveActed)")
+        
+        if allHaveActed {
+            if activePlayers.allSatisfy({ $0.bet == appState.currentHighestBet }) {
+                print("All active players have matched the current highest bet or folded. Moving to the next round.")
+                startNextRound()
+            } else {
+                // Reset hasActed for the next round of betting if necessary
+                for index in appState.connectedPeers.indices {
+                    appState.connectedPeers[index].hasActed = false
+                }
+            }
+        } else {
+            
+            gameController.incrementActivePeer() // Use existing method to move to the next active peer
+        }
+    }
+
+
+    
+    
+    func determineIfHandEnded() {
+        // Check if only one player hasn't folded
+        let activePlayers = appState.connectedPeers.filter { !$0.isFolded }
+        if activePlayers.count == 1 {
+            print("\(activePlayers[0].displayName) wins this hand.")
+            let winnerIndex = appState.connectedPeers.firstIndex(where: {peer in
+                return peer.id == activePlayers[0].id
+            })
+            endHand(winnerIndex: winnerIndex ?? 0)
+            return
+        }
+    }
+    
+    
+//    Just distributing winnings
+    func endHand(winnerIndex: Int) {
+        print("\(appState.connectedPeers[winnerIndex].displayName) collects the pot.")
+        appState.connectedPeers[winnerIndex].money += appState.totalPot
+        appState.totalPot = 0
+        startNewHand()
+    }
+    
+    
+//    Actually doing comparisons and junk
+    func concludeHand() {
+        print("Concluding hand. Comparing final hands.")
+        let winnerIndex = gameController.compareFinalHands()
+        endHand(winnerIndex: winnerIndex)
+    }
+    
+    func startNewHand() {
+        gameController.cardDeck = Deck()
+        gameController.cardDeck.shuffle()
+        appState.communityCards = []
+        appState.networkingController?.broadcastUpdateCommunityCards()
+        gameController.resetPlayersHand()
+        currentRound = .preFlop
+    }
+    
 }
 
 
