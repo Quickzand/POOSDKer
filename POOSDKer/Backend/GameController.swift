@@ -194,6 +194,7 @@ class GameController {
     
     func endTurn() {
         appState.connectedPeers[activePeerIndex].hasActed = true
+        appState.networkingController?.broadcastUpdatePot()
         handController?.determineIfHandEnded()
         handController?.determineIfRoundEnded()
     }
