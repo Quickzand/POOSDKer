@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		16D7B7F92BCDDBB600FD92E1 /* RoundWinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D7B7F82BCDDBB600FD92E1 /* RoundWinnerView.swift */; };
+		16D7B7FC2BCE030A00FD92E1 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 16D7B7FB2BCE030A00FD92E1 /* ConfettiSwiftUI */; };
 		34017E4D2B97B45700B7FB72 /* PlayingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34017E4C2B97B45700B7FB72 /* PlayingCard.swift */; };
 		3401808A2BBFC34400143984 /* GameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340180892BBFC34400143984 /* GameController.swift */; };
 		34215FF32BA8E93F0006315D /* HeaderBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34215FF22BA8E93F0006315D /* HeaderBanner.swift */; };
@@ -54,6 +56,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		16D7B7F82BCDDBB600FD92E1 /* RoundWinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundWinnerView.swift; sourceTree = "<group>"; };
 		34017E4C2B97B45700B7FB72 /* PlayingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayingCard.swift; sourceTree = "<group>"; };
 		340180892BBFC34400143984 /* GameController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameController.swift; sourceTree = "<group>"; };
 		34215FF22BA8E93F0006315D /* HeaderBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderBanner.swift; sourceTree = "<group>"; };
@@ -92,6 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16D7B7FC2BCE030A00FD92E1 /* ConfettiSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,6 +210,7 @@
 				34F998302B9346590077B62F /* TableView.swift */,
 				34C7B2902B8E62D9007DA1EB /* PlayGameView.swift */,
 				34C7B2922B8E6317007DA1EB /* ResultsView.swift */,
+				16D7B7F82BCDDBB600FD92E1 /* RoundWinnerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -237,6 +242,9 @@
 			dependencies = (
 			);
 			name = POOSDKer;
+			packageProductDependencies = (
+				16D7B7FB2BCE030A00FD92E1 /* ConfettiSwiftUI */,
+			);
 			productName = POOSDKer;
 			productReference = 344582222B816A530008524D /* POOSDKer.app */;
 			productType = "com.apple.product-type.application";
@@ -309,6 +317,9 @@
 				Base,
 			);
 			mainGroup = 344582192B816A530008524D;
+			packageReferences = (
+				16D7B7FA2BCE030A00FD92E1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+			);
 			productRefGroup = 344582232B816A530008524D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -362,6 +373,7 @@
 				34C7B2892B8E5ADD007DA1EB /* HostGameView.swift in Sources */,
 				34C7B28B2B8E5CE6007DA1EB /* JoinGameView.swift in Sources */,
 				34FDDDA02BCB3FC300A57A55 /* PlayerCardView.swift in Sources */,
+				16D7B7F92BCDDBB600FD92E1 /* RoundWinnerView.swift in Sources */,
 				3433FF7F2B968B4800C90F8B /* Extensions.swift in Sources */,
 				34DACA742BC3002C00F9A0EA /* Peer.swift in Sources */,
 				342541772B9063C8002545BD /* Settings.swift in Sources */,
@@ -708,6 +720,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		16D7B7FA2BCE030A00FD92E1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		16D7B7FB2BCE030A00FD92E1 /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16D7B7FA2BCE030A00FD92E1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3445821A2B816A530008524D /* Project object */;
 }
