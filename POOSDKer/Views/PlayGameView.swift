@@ -55,7 +55,7 @@ struct PlayGameView: View {
                 
                 VStack {
                     Text("Pot")
-                    Text("$\(appState.getTotalPot())")
+                    Text("$\(appState.totalPot)")
                 }.frame(maxWidth: .infinity)
                     .background(Color("OutsetBackground"))
                     .clipShape(RoundedRectangle(cornerRadius: 15.0))

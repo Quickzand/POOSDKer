@@ -21,7 +21,6 @@ struct PlayerCardView : View{
     
     
     private var playerView: some View {
-        print(displayedPeersList)
            guard displayedPeersList.indices.contains(index) else { return AnyView(EmptyView()) }
            let player = displayedPeersList[index]
 

@@ -24,7 +24,7 @@ struct Peer: Identifiable, Codable, Equatable {
     
     var prevBet : Int = 0
     
-    var waiting : Bool = false
+    var hasActed : Bool = false
     
     var mcPeerID: MCPeerID?
 
@@ -53,7 +53,7 @@ struct Peer: Identifiable, Codable, Equatable {
         self.isFolded = false
         self.cards = []
         self.prevBet = 0
-        self.waiting = true
+        self.hasActed = false
     }
 }
 
