@@ -364,13 +364,27 @@ class HandController {
         }
     }
     
+    func checkForGameOver() -> Bool {
+        if (gameController.appState.connectedPeers.filter({peer in
+            peer.money != 0
+        }).count <= 1) {
+            return true
+        }
+        return false
+    }
+    
     
 //    Just distributing winnings
     func endHand(winnerIndex: Int) {
         print("\(appState.connectedPeers[winnerIndex].displayName) collects the pot.")
         appState.connectedPeers[winnerIndex].money += appState.totalPot
         appState.totalPot = 0
-        startNewHand()
+        if(checkForGameOver()) {
+            gameController.endGame()
+        }
+        else {
+            startNewHand()
+        }
     }
     
     
