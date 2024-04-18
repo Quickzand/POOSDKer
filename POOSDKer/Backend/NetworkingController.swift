@@ -146,11 +146,12 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         let peerID : String?
         let money : Int?
         let bet : Int?
+        let pot : Int?
         let isFolded : Bool?
         let cards : [CardModel]?
         
         enum CodingKeys: String, CodingKey {
-            case commandType, peers, activePeerIndex, dealerButtonIndex, peerID, money, bet, isFolded, cards
+            case commandType, peers, activePeerIndex, dealerButtonIndex, peerID, money, bet, isFolded, cards, pot
         }
         
         init(from decoder: Decoder) throws {
@@ -164,6 +165,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
             bet =  try container.decodeIfPresent(Int.self, forKey: .bet)
             isFolded = try container.decodeIfPresent(Bool.self, forKey: .isFolded)
             cards = try container.decodeIfPresent([CardModel].self, forKey: .cards)
+            pot = try container.decodeIfPresent(Int.self, forKey: .pot)
         }
     }
     
@@ -181,6 +183,7 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         case updatePlayerCards = "updatePlayerCards"
         case updateCommunityCards = "updateCommunityCards"
         case updateDealerButton = "updateDealerButton"
+        case updatePot = "updatePot"
     }
     
     
@@ -224,6 +227,9 @@ class NetworkingController: NSObject,ObservableObject, MCNearbyServiceAdvertiser
         case .updateDealerButton:
             let dealerButtonIndex = appState.dealerButtonIndex
             broadcastData["dealerButtonIndex"] = appState.dealerButtonIndex
+        case .updatePot:
+            let pot = appState.totalPot
+            broadcastData["pot"] = pot
         case .endGame:
             print("Ending game...")
         default:
@@ -411,6 +417,13 @@ extension NetworkingController : MCSessionDelegate {
                         self.appState.triggerViewUpdate.toggle()
                     }
                     
+                case BroadcastCommandType.updatePot.rawValue:
+                    print("Updating the pot...")
+                    if let pot = decodedData.pot {
+                        self.appState.totalPot = pot
+                        self.appState.triggerViewUpdate.toggle()
+                    }
+                    
                     //                MARK: ALL COMMANDS TO BE RECEIVED FROM HOST
                 case PeerToHostCommandType.check.rawValue:
                     if !self.appState.isHost {
@@ -504,6 +517,10 @@ extension NetworkingController {
     
     func broadcastUpdateDealerButton() {
         self.broadcastCommandToPeers(broadcastCommandType: .updateDealerButton)
+    }
+    
+    func broadcastUpdatePot() {
+        self.broadcastCommandToPeers(broadcastCommandType: .updatePot)
     }
 }
 
