@@ -86,29 +86,9 @@ class GameController {
         
         self.distributeCards()
         
-        
-        //self.appState.networkingController?.broadcastUpdateCommunityCards()
-        if appState.connectedPeers.count == 1 {
-            appState.activePeerIndex = appState.dealerButtonIndex + 0
-        }
-        if appState.connectedPeers.count == 2 {
-            appState.activePeerIndex = appState.dealerButtonIndex + 1
-            if appState.activePeerIndex >= appState.connectedPeers.count {
-                appState.activePeerIndex = 0
-            }
-        }
-        if appState.connectedPeers.count == 3 {
-            appState.activePeerIndex = appState.dealerButtonIndex + 2
-            if appState.activePeerIndex >= appState.connectedPeers.count {
-                appState.activePeerIndex = 0
-            }
-        }
-        else {
-            appState.activePeerIndex = appState.dealerButtonIndex + 3
-            if appState.activePeerIndex >= appState.connectedPeers.count {
-                appState.activePeerIndex = 0
-            }
-        }
+        self.appState.communityCards = []
+        self.appState.networkingController?.broadcastUpdateCommunityCards()
+        self.activePeerIndex = 0
     }
 
     
