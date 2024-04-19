@@ -56,7 +56,7 @@ struct PlayGameView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 15.0))
                 .padding(.horizontal, 0.25)
                 .padding(.top, 4)
-                .shadow(color: isActivePeer() ? Color.blue.opacity(0.5) : Color.clear, radius: isActivePeer() ? 10 : 0, x: 0, y: 0) // This line makes the button glow conditionally
+                .shadow(color: isActivePeer() ? Color.blue.opacity(0.7) : Color.clear, radius: isActivePeer() ? 10 : 0, x: 0, y: 0) // This line makes the button glow conditionally
                 .hueRotation(Angle(degrees: hueRotation)) // This line rotates the hue of the button's color
                 .onReceive(timer) { _ in
                     if isActivePeer() {
@@ -76,17 +76,8 @@ struct PlayGameView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 15.0))
                     .padding(.horizontal, 0.25)
                     .padding(.top, 4)
-                    .shadow(color: isActivePeer() ? Color.blue.opacity(0.5) : Color.clear, radius: isActivePeer() ? 10 : 0, x: 0, y: 0) // This line makes the button glow conditionally
-                    .hueRotation(Angle(degrees: hueRotation)) // This line rotates the hue of the button's color
-                    .onReceive(timer) { _ in
-                        if isActivePeer() {
-                            hueRotation += 10
-                            if hueRotation >= 360 {
-                                hueRotation = 0
-                            }
-                        }
-                        
-                    }
+                    .shadow(color: isActivePeer() ? Color.blue.opacity(0.7) : Color.clear, radius: isActivePeer() ? 10 : 0, x: 0, y: 0) // This line makes the button glow conditionally
+                    .hueRotation(Angle(degrees: hueRotation)) // This line rotates the hue
 
             }
             .padding(.top, 5)
@@ -153,16 +144,7 @@ struct PlayGameView: View {
                     // set height
                     .frame(height: 10)
                     .shadow(color: isActivePeer() ? Color.blue.opacity(0.5) : Color.clear, radius: isActivePeer() ? 10 : 0, x: 0, y: 0) // This line makes the button glow conditionally
-                    .hueRotation(Angle(degrees: hueRotation)) // This line rotates the hue of the button's color
-                    .onReceive(timer) { _ in
-                        if isActivePeer() {
-                            hueRotation += 10
-                            if hueRotation >= 360 {
-                                hueRotation = 0
-                            }
-                        }
-                        
-                    }
+                    .hueRotation(Angle(degrees: hueRotation)) // This line rotates the hue
                     .padding()
             }
             .padding()
