@@ -84,29 +84,9 @@ class GameController {
         
         self.distributeCards()
         
-        
-        //self.appState.networkingController?.broadcastUpdateCommunityCards()
-        if appState.connectedPeers.count == 1 {
-            appState.activePeerIndex = appState.dealerButtonIndex + 0
-        }
-        if appState.connectedPeers.count == 2 {
-            appState.activePeerIndex = appState.dealerButtonIndex + 1
-            if appState.activePeerIndex >= appState.connectedPeers.count {
-                appState.activePeerIndex = 0
-            }
-        }
-        if appState.connectedPeers.count == 3 {
-            appState.activePeerIndex = appState.dealerButtonIndex + 2
-            if appState.activePeerIndex >= appState.connectedPeers.count {
-                appState.activePeerIndex = 0
-            }
-        }
-        else {
-            appState.activePeerIndex = appState.dealerButtonIndex + 3
-            if appState.activePeerIndex >= appState.connectedPeers.count {
-                appState.activePeerIndex = 0
-            }
-        }
+        self.appState.communityCards = []
+        self.appState.networkingController?.broadcastUpdateCommunityCards()
+        self.activePeerIndex = 0
     }
 
     
@@ -192,6 +172,7 @@ class GameController {
     
     func endTurn() {
         appState.connectedPeers[activePeerIndex].hasActed = true
+        appState.networkingController?.broadcastUpdatePot()
         handController?.determineIfHandEnded()
         handController?.determineIfRoundEnded()
     }
@@ -361,13 +342,27 @@ class HandController {
         }
     }
     
+    func checkForGameOver() -> Bool {
+        if (gameController.appState.connectedPeers.filter({peer in
+            peer.money != 0
+        }).count <= 1) {
+            return true
+        }
+        return false
+    }
+    
     
 //    Just distributing winnings
     func endHand(winnerIndex: Int) {
         print("\(appState.connectedPeers[winnerIndex].displayName) collects the pot.")
         appState.connectedPeers[winnerIndex].money += appState.totalPot
         appState.totalPot = 0
-        startNewHand()
+        if(checkForGameOver()) {
+            gameController.endGame()
+        }
+        else {
+            startNewHand()
+        }
     }
     
     
