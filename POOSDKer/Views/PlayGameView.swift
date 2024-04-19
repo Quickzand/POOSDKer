@@ -152,7 +152,7 @@ struct PlayGameView: View {
         }
         .withBackground()
         .KeyboardView(numericInput: $betInput, shown: $showBetSheet)
-        
+        .roundWinnerView(shown: appState.trackWinnerDisplay)
     }
 }
 
