@@ -359,6 +359,19 @@ class HandController {
         print("\(appState.connectedPeers[winnerIndex].displayName) collects the pot.")
         appState.connectedPeers[winnerIndex].money += appState.totalPot
         appState.totalPot = 0
+
+        
+        var oldActivePeerIndex = gameController.activePeerIndex
+        for i in 0...gameController.appState.connectedPeers.count - 1 {
+            if gameController.appState.connectedPeers[i].money == 0 {
+                gameController.appState.connectedPeers[i].isOut = true
+                gameController.activePeerIndex = i
+                gameController.appState.networkingController?.broadcastUpdatePlayerOutState()
+            }
+        }
+        gameController.activePeerIndex = oldActivePeerIndex
+        
+        
         if(checkForGameOver()) {
             gameController.endGame()
         }

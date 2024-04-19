@@ -527,6 +527,10 @@ extension NetworkingController {
         self.broadcastCommandToPeers(broadcastCommandType: .updatePlayerFoldState)
     }
     
+    func broadcastUpdatePlayerOutState() {
+        self.broadcastCommandToPeers(broadcastCommandType: .updatePlayerOutState)
+    }
+    
     func broadcastUpdatePlayerCards() {
         self.broadcastCommandToPeers(broadcastCommandType: .updatePlayerCards)
     }
@@ -542,6 +546,8 @@ extension NetworkingController {
     func broadcastUpdatePot() {
         self.broadcastCommandToPeers(broadcastCommandType: .updatePot)
     }
+    
+    
 }
 
 // MARK: All broadcasting functions for individuals
