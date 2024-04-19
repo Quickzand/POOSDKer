@@ -391,6 +391,7 @@ class HandController {
         else {
             startNewHand()
         }
+        appState.winnerIndex = winnerIndex;
     }
     
     
@@ -399,6 +400,7 @@ class HandController {
         print("Concluding hand. Comparing final hands.")
         let winnerIndex = gameController.compareFinalHands()
         endHand(winnerIndex: winnerIndex)
+        appState.trackWinnerDisplay = true;
     }
     
     func startNewHand() {

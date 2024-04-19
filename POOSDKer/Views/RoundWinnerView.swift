@@ -9,7 +9,7 @@ import SwiftUI
 import ConfettiSwiftUI
 
 struct RoundWinnerView: View {
-    @Binding var shown: Bool
+    @EnvironmentObject var appState : AppState
     @State private var counter: Int = 0
     
     var body: some View {
@@ -18,7 +18,7 @@ struct RoundWinnerView: View {
                 Rectangle()
                     .fill(Color(hex: "#CEB064"))
                     .frame(width: 50, height: 90)
-                Text("Round Winner")
+                Text(appState.connectedPeers[appState.winnerIndex].displayName + " Wins!")
                     .font(.caption)
                     .foregroundColor(.white)
                     .fontWeight(.bold)
@@ -34,41 +34,42 @@ struct RoundWinnerView: View {
             .confettiCannon(counter: $counter, num: 50, openingAngle: Angle(degrees: 0), closingAngle: Angle(degrees: 360), radius: 200)
             .frame(maxWidth: .infinity)
             .transition(.move(edge: .top)) // Transition from the top
-            .animation(.easeInOut(duration: 0.5), value: shown) // Apply the animation
-            .offset(y: shown ? 0 : -100) // Offset to control the slide in effect
-            .opacity(shown ? 1 : 0)
+            .animation(.easeInOut(duration: 0.5), value: appState.trackWinnerDisplay) // Apply the animation
+            .offset(y: appState.trackWinnerDisplay ? 0 : -100) // Offset to control the slide in effect
+            .opacity(appState.trackWinnerDisplay ? 1 : 0)
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) { // Set the delay to 2 seconds
                 withAnimation {
-                    shown = false // This will hide the toast after 2 seconds
+                    appState.trackWinnerDisplay = false // This will hide the toast after 2 seconds
                 }
             }
         }
-        .onChange(of:shown) {
-            if shown {
+        .onChange(of: appState.trackWinnerDisplay) {
+            if appState.trackWinnerDisplay {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 5) { // Set the delay to 2 seconds
                     withAnimation {
-                        shown = false // This will hide the toast after 2 seconds
+                        appState.trackWinnerDisplay = false // This will hide the toast after 2 seconds
                     }
                 }
                 counter += 1
             }
         }
+        .animation(.easeInOut(duration: 0.5), value: appState.trackWinnerDisplay)
+        .transition(.move(edge: .top))
     }
 }
 
 extension View {
-    func roundWinnerView(shown: Binding<Bool>) -> some View {
+    func roundWinnerView(shown: Bool) -> some View {
         overlay(
-            RoundWinnerView(shown: shown)
-                .animation(.easeInOut(duration: 0.5), value: shown.wrappedValue)
-                .transition(.move(edge: .top))
+            RoundWinnerView()
         )
     }
 }
 
 struct RoundWinnerPreview: View {
+    @EnvironmentObject var appState : AppState
     @State private var showRoundWinner = false
     
     var body: some View {
@@ -83,7 +84,7 @@ struct RoundWinnerPreview: View {
             .clipShape(Capsule())
             Spacer()
         }
-        .roundWinnerView(shown: $showRoundWinner)
+        .roundWinnerView(shown: appState.trackWinnerDisplay)
     }
 }
 
