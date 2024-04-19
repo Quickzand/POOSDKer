@@ -89,7 +89,7 @@ struct PlayerCardView : View{
                 .background(Color("OutsetBackground"))
                 .border(.black, width: 1)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
-                .opacity(player.isFolded ? 0.5 : 1)
+                .opacity(player.isFolded ? 0.5 : player.isOut ? 0 : 1)
            )
        }
        
