@@ -194,18 +194,23 @@ class GameController {
     }
     
     func incrementActivePeer() {
-        var startingIndex = activePeerIndex
+        let startingIndex = activePeerIndex
         self.activePeerIndex += 1 ;
         if activePeerIndex >= appState.connectedPeers.count {
             activePeerIndex = 0;
         }
         
-        while appState.connectedPeers[self.activePeerIndex].isFolded == true {
+        print("HERE \(appState.connectedPeers[self.activePeerIndex].isFolded) \t \(appState.connectedPeers[self.activePeerIndex].displayName)")
+        
+        while appState.connectedPeers[self.activePeerIndex].isFolded {
+            print("Enjoying men at this point \(appState.connectedPeers[self.activePeerIndex].displayName)")
             self.activePeerIndex += 1 ;
             if activePeerIndex >= appState.connectedPeers.count {
                 activePeerIndex = 0;
             }
+            self.networkingController.broadcastUpdateGameState()
             if startingIndex == activePeerIndex {
+                handController?.determineIfHandEnded()
                 break
             }
         }
@@ -216,14 +221,24 @@ class GameController {
     func resetPlayersRound() {
         for i in 0...appState.connectedPeers.count - 1 {
             appState.connectedPeers[i].bet = 0
-            appState.connectedPeers[i].isFolded = false
             appState.connectedPeers[i].prevBet = 0
             appState.connectedPeers[i].hasActed = false
             appState.networkingController?.broadcastUpdatePeerBet()
-            appState.networkingController?.broadcastUpdatePlayerFoldState()
         }
         
         activePeerIndex = 0
+        while appState.connectedPeers[self.activePeerIndex].isFolded {
+            print("Enjoying men at this point \(appState.connectedPeers[self.activePeerIndex].displayName)")
+            self.activePeerIndex += 1 ;
+            if activePeerIndex >= appState.connectedPeers.count {
+                activePeerIndex = 0;
+            }
+            self.networkingController.broadcastUpdateGameState()
+            if 0 == activePeerIndex {
+                handController?.determineIfHandEnded()
+                break
+            }
+        }
     }
     
     
