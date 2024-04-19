@@ -26,6 +26,8 @@ struct Peer: Identifiable, Codable, Equatable {
     
     var hasActed : Bool = false
     
+    var isOut : Bool
+    
     var mcPeerID: MCPeerID?
 
     // Since MCPeerID is not Codable, we exclude it from the encoding process
@@ -38,6 +40,7 @@ struct Peer: Identifiable, Codable, Equatable {
         case bet
         case isFolded
         case cards
+        case isOut
     }
     
     
@@ -53,7 +56,7 @@ struct Peer: Identifiable, Codable, Equatable {
         self.isFolded = false
         self.cards = []
         self.prevBet = 0
-        self.hasActed = false
+        self.isOut = false
     }
 }
 
