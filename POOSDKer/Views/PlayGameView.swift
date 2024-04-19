@@ -17,6 +17,10 @@ struct PlayGameView: View {
     @State private var isInputFocused: Bool = false
     @State private var betInput = ""
     @State private var showBetSheet = false
+    @State private var hueRotation = 0.0
+
+    let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+
 
     func isCheckValid() -> Bool{
         guard appState.connectedPeers.indices.contains(appState.activePeerIndex) else { return false}
@@ -51,7 +55,18 @@ struct PlayGameView: View {
                 .background(Color("OutsetBackground"))
                 .clipShape(RoundedRectangle(cornerRadius: 15.0))
                 .padding(.horizontal, 0.25)
-                    .padding(.top, 4)
+                .padding(.top, 4)
+                .shadow(color: isActivePeer() ? Color.blue.opacity(0.7) : Color.clear, radius: isActivePeer() ? 10 : 0, x: 0, y: 0) // This line makes the button glow conditionally
+                .hueRotation(Angle(degrees: hueRotation)) // This line rotates the hue of the button's color
+                .onReceive(timer) { _ in
+                    if isActivePeer() {
+                        hueRotation += 10
+                        if hueRotation >= 360 {
+                            hueRotation = 0
+                        }
+                    }
+                    
+                }
                 
                 VStack {
                     Text("Pot")
@@ -60,8 +75,9 @@ struct PlayGameView: View {
                     .background(Color("OutsetBackground"))
                     .clipShape(RoundedRectangle(cornerRadius: 15.0))
                     .padding(.horizontal, 0.25)
-                        .padding(.top, 4)
-                    
+                    .padding(.top, 4)
+                    .shadow(color: isActivePeer() ? Color.blue.opacity(0.7) : Color.clear, radius: isActivePeer() ? 10 : 0, x: 0, y: 0) // This line makes the button glow conditionally
+                    .hueRotation(Angle(degrees: hueRotation)) // This line rotates the hue
 
             }
             .padding(.top, 5)
@@ -124,7 +140,12 @@ struct PlayGameView: View {
                     }
                 }.disabled(!isActivePeer())
                     .padding(.bottom, 30)
-                
+                    .cornerRadius(10)
+                    // set height
+                    .frame(height: 10)
+                    .shadow(color: isActivePeer() ? Color.blue.opacity(0.5) : Color.clear, radius: isActivePeer() ? 10 : 0, x: 0, y: 0) // This line makes the button glow conditionally
+                    .hueRotation(Angle(degrees: hueRotation)) // This line rotates the hue
+                    .padding()
             }
             .padding()
             
